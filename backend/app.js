@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const teachersRoutes = require('./routes/teachers');
+const studentsRoutes = require('./routes/students');
+const lessonsRoutes = require('./routes/lessons');
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/teachers', teachersRoutes);
-
+app.use('/api/students', studentsRoutes);
+app.use('/api/lessons', lessonsRoutes);
 
 app.listen(5000);
