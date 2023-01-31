@@ -1,39 +1,31 @@
-let DUMMY_TEACHERS = [
-  {
-    id: 1,
-    name: "Sherlock",
-    surname: "Holmes",
-    email: "mysteries@fake.com",
-    phoneNumber: "+371 20001607",
-    description: "Likes to solve mysteries",
-    password: "Watson",
-    subjects: [],
-    lessons: [],
-  },
-  {
-    id: 2,
-    name: "John",
-    surname: "Watson",
-    email: "mysteries2@fake.com",
-    phoneNumber: "+371 22201607",
-    description: "Likes to solve mysteries",
-    password: "Sherlock",
-    subjects: [],
-    lessons: [],
-  },
-];
+const mongoose = require("mongoose");
+
+const Teacher = require("../models/teacher");
 
 exports.getTeachers = (req, res, next) => {
-  // MongoDB all teachers
-  res.status(200).json({ teachers: DUMMY_TEACHERS });
+  Teacher.find()
+    .then((teachers) => {
+      res.status(200).json({ teachers: teachers });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.getTeacher = (req, res, next) => {
   const teacherId = req.params.teacherId;
-  teacher = DUMMY_TEACHERS.find((teacher) => {
-    return teacherId === teacher.id.toString();
-  });
-  res.status(200).json({ teacher: teacher });
+
+  Teacher.findById(teacherId)
+    .then((teacher) => {
+      res.status(200).json({ teacher: teacher });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.signup = (req, res, next) => {
@@ -42,63 +34,88 @@ exports.signup = (req, res, next) => {
     name,
     surname,
     email,
-    phoneNumber,
+    phone,
     description,
     password,
     subjects,
     lessons,
   } = req.body;
 
-  newTeacher = {
+  const newTeacher = Teacher({
     id: id,
     name: name,
     surname: surname,
-    email: surname,
-    phoneNumber: phoneNumber,
+    email: email,
+    phone: phone,
     description: description,
     password: password,
     subjects: subjects,
     lessons: lessons,
-  };
+  });
 
-  DUMMY_TEACHERS.push(newTeacher);
-
-  res.status(200).json({ teacher: newTeacher });
+  newTeacher
+    .save()
+    .then((newTeacher) => {
+      res.status(200).json({ teacher: newTeacher });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.updateTeacher = (req, res, next) => {
+  const teacherId = req.params.teacherId;
+
   const {
-    id,
     name,
     surname,
     email,
-    phoneNumber,
+    phone,
     description,
     password,
     subjects,
     lessons,
   } = req.body;
 
-  const teacherId = req.params.teacherId;
-  teacher = DUMMY_TEACHERS.find((teacher) => {
-    return teacherId === teacher.id.toString();
-  });
+  Teacher.findById(teacherId)
+    .then((teacher) => {
+      if (!teacher) {
+        throw "Update failed: teacher not found!";
+      }
 
-  teacher.name = name; // currently updating only name
+      teacher.name = name;
+      teacher.surname = surname;
+      teacher.email = email;
+      teacher.phone = phone;
+      teacher.description = description;
+      teacher.password = password;
+      teacher.subjects = subjects;
+      teacher.lessons = lessons;
 
-  res.status(200).json({ teacher: teacher });
+      return teacher.save();
+    })
+    .then((teacher) => {
+      res.status(200).json({ teacher: teacher });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
-
 
 exports.deleteTeacher = (req, res, next) => {
   const teacherId = req.params.teacherId;
 
-  // removing teacher
-  filtered = DUMMY_TEACHERS.filter(teacher => {
-    return teacher.id != teacherId;
-  })
-
-  DUMMY_TEACHERS = filtered;
- 
-  res.status(200).json({ teachers: DUMMY_TEACHERS });
+  Teacher.findByIdAndRemove(teacherId)
+    .then(() => {
+      res.status(200).json({ message: "Successfuly deleted teacher!" });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };

@@ -1,9 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
-const teachersRoutes = require('./routes/teachers');
-const studentsRoutes = require('./routes/students');
-const lessonsRoutes = require('./routes/lessons');
+const teachersRoutes = require("./routes/teachers");
+const studentsRoutes = require("./routes/students");
+const lessonsRoutes = require("./routes/lessons");
 
 const app = express();
 
@@ -21,8 +22,23 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/teachers', teachersRoutes);
-app.use('/api/students', studentsRoutes);
-app.use('/api/lessons', lessonsRoutes);
+app.use("/api/teachers", teachersRoutes);
+app.use("/api/students", studentsRoutes);
+app.use("/api/lessons", lessonsRoutes);
 
-app.listen(5000);
+// handling errors
+app.use((error, req, res, next) => {
+  res.status(500);
+  res.json({ message: error.message || 'An unknown error occurred!' });
+});
+
+mongoose
+  .connect(
+    `mongodb://dataquery:4Y7hjTQD3@95.217.14.19/data?authMechanism=DEFAULT&authSource=data`
+  )
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
