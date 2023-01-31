@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-import MainNavigation from "./shared/navigation/MainNavigation";
+import MainNavigation from "./components/navigation/MainNavigation";
 import FindLesson from "./pages/FindLesson";
-import Lessons from "./pages/FindLesson";
+import Lessons from "./pages/Lessons";
 import Schedule from "./pages/Schedule";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -13,6 +13,7 @@ const App = () => {
     <>
       <MainNavigation />
       <Routes>
+        <Route path="/" element={<FindLesson />} />
         <Route path="/find" element={<FindLesson />} />
         <Route path="/lessons" element={<Lessons />} />
         <Route path="/schedule" element={<Schedule />} />

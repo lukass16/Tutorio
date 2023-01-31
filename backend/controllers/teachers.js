@@ -24,6 +24,7 @@ let DUMMY_TEACHERS = [
 ];
 
 exports.getTeachers = (req, res, next) => {
+  // MongoDB all teachers
   res.status(200).json({ teachers: DUMMY_TEACHERS });
 };
 

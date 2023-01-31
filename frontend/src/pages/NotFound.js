@@ -1,10 +1,8 @@
 import React from "react";
 
-import "./NotFound.css";
-
 const NotFound = (props) => {
   return (
-   <h1>Find Lesson</h1>
+   <h1>Not found</h1>
   );
 };
 
