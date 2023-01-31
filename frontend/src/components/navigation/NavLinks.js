@@ -19,6 +19,9 @@ const NavLinks = (props) => {
       <Button>
         <NavLink to="/profile">Profile</NavLink>
       </Button>
+      <Button>
+        <NavLink to="/signup">Signup</NavLink>
+      </Button>
     </Stack>
   );
 };
