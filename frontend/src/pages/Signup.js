@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
 import "./style.css";
 
 
@@ -21,8 +21,8 @@ function App() {
   ];
 
   const errors = {
-    uname: "invalid username",
-    pass: "invalid password"
+    uname: "nevalīds lietotājvārds",
+    pass: "nevalīda parole"
   };
 
   const handleSubmit = (event) => {
@@ -30,7 +30,6 @@ function App() {
     event.preventDefault();
 
     var { uname, pass } = document.forms[0];
-
     // Find user login info
     const userData = database.find((user) => user.username === uname.value);
 
