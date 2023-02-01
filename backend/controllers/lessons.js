@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Lesson = require("../models/lessons");
+const Lesson = require("../models/lesson");
 
 exports.getLessons = (req, res, next) => {
   Lesson.find()
@@ -92,12 +92,12 @@ exports.updateLesson = (req, res, next) => {
     });
 };
 
-exports.deleteTeacher = (req, res, next) => {
-  const teacherId = req.params.teacherId;
+exports.deleteLesson = (req, res, next) => {
+  const lessonId = req.params.lessonId;
 
-  Teacher.findByIdAndRemove(teacherId)
+  Lesson.findByIdAndRemove(lessonId)
     .then(() => {
-      res.status(200).json({ message: "Successfuly deleted teacher!" });
+      res.status(200).json({ message: "Successfuly deleted lesson!" });
     })
     .catch((err) => {
       console.log(err);
