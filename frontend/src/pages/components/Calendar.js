@@ -1,10 +1,11 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
+import { useFormik } from "formik";
 import FullCalendar, { formatDate } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
 const style = {
@@ -12,19 +13,74 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 700,
+  height: 700,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-let newEvent = {};
+let selectedEventId;
+let editing = false;
 
 const Calendar = () => {
-  
+  const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  // using the Formik hook
+  const formik = useFormik({
+    initialValues: {
+      subject: "",
+      place: "",
+      price: "",
+    },
+    onSubmit: (values) => {
+      if (editing) {
+        const calendarApi = cal.current.getApi();
+        const currentEvent = calendarApi.getEventById(selectedEventId);
+
+        const updatedLesson = {
+          subject: values.subject,
+          price: values.price,
+          start: currentEvent.start,
+          end: currentEvent.end,
+          place: values.place,
+          teacherId: "DUMMY DATA",
+        };
+
+        currentEvent.setProp("title", values.subject);
+
+        console.log("Successfully updated lesson");
+        console.log(updatedLesson);
+
+        //set end edit mode
+        editing = false;
+
+        setOpenEditModal(false);
+      } else {
+        const calendarApi = cal.current.getApi();
+        const currentEvent = calendarApi.getEventById(selectedEventId);
+        currentEvent.setProp("title", values.subject);
+
+        const newLesson = {
+          subject: values.subject,
+          price: values.price,
+          start: currentEvent.start,
+          end: currentEvent.end,
+          place: values.place,
+          teacherId: "DUMMY DATA",
+        };
+
+        console.log("Successfully created lesson");
+        console.log(newLesson);
+
+        setOpenEditModal(false);
+      }
+
+    },
+  });
 
   const handleClose = () => setOpenEditModal(false);
 
@@ -34,26 +90,45 @@ const Calendar = () => {
     const calendarApi = selected.view.calendar;
     calendarApi.unselect();
 
-    // Dummy data
-    const title = "Dummy data";
+    const selectedEvent = {};
 
-    newEvent.id = `${selected.dateStr}-${title}`;
-    newEvent.title = title;
-    newEvent.start = selected.startStr;
-    newEvent.end = selected.endStr;
-    newEvent.allDay = selected.allDay;
+    selectedEvent.id = `${selected.startStr}`;
+    selectedEventId = selectedEvent.id; // setting current selected event id
+    selectedEvent.title = "";
+    selectedEvent.start = selected.startStr;
+    selectedEvent.end = selected.endStr;
+    selectedEvent.allDay = selected.allDay;
 
-    console.log(newEvent);
-
-    calendarApi.addEvent(newEvent);
+    calendarApi.addEvent(selectedEvent);
   };
 
-  const handleAddClick = () => {
-    console.log(newEvent);
+  const handleCancel = (e) => {
+    if (editing) {
+      const calendarApi = cal.current.getApi();
+      calendarApi.unselect();
+      setOpenEditModal(false);
+    } else {
+      e.preventDefault();
+      setOpenEditModal(false);
+      const calendarApi = cal.current.getApi();
+      calendarApi.getEventById(selectedEventId).remove();
+    }
+
+  };
+
+  const handleDelete = () => {
+    const calendarApi = cal.current.getApi();
+    calendarApi.getEventById(selectedEventId).remove();
+
+    setOpenEditModal(false);
   };
 
   const handleEventClick = (selected) => {
-    selected.event.remove();
+    selectedEventId = selected.event.id;
+
+    //set start edit mode
+    editing = true;
+    setOpenEditModal(true);
   };
 
   return (
@@ -64,15 +139,63 @@ const Calendar = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box
+          sx={style}
+          component="form"
+          onSubmit={formik.handleSubmit}
+          noValidate
+          autoComplete="off"
+        >
           <Typography variant="h6">Confirm Lesson</Typography>
-          <Button onClick={handleAddClick}>Button</Button>
+          <div>
+            <TextField
+              required
+              id="subject"
+              name="subject"
+              label="Subject"
+              defaultValue=""
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.subject}
+            />
+            <TextField
+              required
+              id="place"
+              name="place"
+              label="Place"
+              defaultValue=""
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.place}
+            />
+            <TextField
+              required
+              id="price"
+              name="price"
+              label="Price"
+              defaultValue=""
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.price}
+            />
+          </div>
+          <Button type="submit">{editing ? "Update" : "Submit"}</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
+          {editing && (
+            <Button onClick={handleDelete} variant="danger">
+              Delete
+            </Button>
+          )}
         </Box>
       </Modal>
       <Box display="flex" justifyContent="space-between">
         {/* CALENDAR */}
         <Box flex="1 1 100%" ml="15px">
           <FullCalendar
+            ref={cal}
             height="75vh"
             plugins={[timeGridPlugin, interactionPlugin]}
             headerToolbar={{

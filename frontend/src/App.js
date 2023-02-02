@@ -5,6 +5,27 @@ import StudentApp from "./StudentApp";
 import TeacherApp from "./TeacherApp";
 
 
+export default function App () {
+  const [active, setActive] = useState("Teacher");
+  return (
+    <div className = "App">
+      <nav>
+        <button onClick = {() => setActive("Student")}>Student</button>
+        <button onClick = {() => setActive("Teacher")}>Teacher</button>
+      </nav>
+      <div>
+      {active === "Student" && <StudentApp/>}
+      {active === "Teacher" && <TeacherApp/>}
+      </div>
+    </div>
+  );
+};
+
+
+
+
+//! Don't delete:
+
 // import MainNavigation from "./components/navigation/MainNavigation";
 // import FindLesson from "./pages/FindLesson";
 // import Lessons from "./pages/Lessons";
@@ -45,22 +66,5 @@ import TeacherApp from "./TeacherApp";
 //     </>
 //   );
 // };
-
-
-export default function App () {
-  const [active, setActive] = useState ("")
-  return (
-    <div className = "App">
-      <nav>
-        <button onClick = {() => setActive("Student")}>Student</button>
-        <button onClick = {() => setActive("Teacher")}>Teacher</button>
-      </nav>
-      <div>
-      {active === "Student" && <StudentApp/>}
-      {active === "Teacher" && <TeacherApp/>}
-      </div>
-    </div>
-  );
-};
 
 
