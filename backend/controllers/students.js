@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Student = require("../models/student");
 
+
 exports.getStudents = (req, res, next) => {
   Student.find()
     .then((students) => {
