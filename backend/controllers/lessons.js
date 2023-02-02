@@ -1,84 +1,107 @@
-let DUMMY_LESSONS = [
-  {
-    id: 1,
-    subject: "Math",
-    time: {
-      date: "26.01.2022 14.00",
-      duration: "1 h",
-    },
-    place: {
-      link: "Zoomlink",
-      info: "Password: 234322",
-    },
-    price: 20,
-    studentinfo: "I want to learn about complex numbers",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    subject: "Physics",
-    time: {
-      date: "27.01.2023 13.00",
-      duration: "2 h",
-    },
-    place: {
-      link: "Zoomlink",
-      info: "Password: 23432342",
-    },
-    price: 25,
-    studentinfo: "I want to learn about electromagnetism",
-    status: "Finished",
-  },
-];
+const mongoose = require("mongoose");
+
+const Lesson = require("../models/lesson");
+
+exports.getLessons = (req, res, next) => {
+  Lesson.find()
+    .then((lessons) => {
+      res.status(200).json({ lessons : lessons });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
+};
 
 exports.getLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
-  lesson = DUMMY_LESSONS.find((lesson) => {
-    return lessonId === lesson.id.toString();
-  });
-  res.status(200).json({ lesson: lesson });
+
+  Lesson.findById(lessonId)
+    .then((lesson) => {
+      res.status(200).json({ lesson: lesson });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.createLesson = (req, res, next) => {
-  const { id, subject, time, place, price, studentinfo, status } = req.body;
+  const { 
+    subject, 
+    comment_from_st, 
+    date, 
+    place, 
+    lessonId, 
+    studentId } = req.body;
 
-  newLesson = {
-    id: id,
+    const newLesson = Lesson({
     subject: subject,
-    time: time,
+    comment_from_st: comment_from_st,
+    date: date,
     place: place,
-    price: price,
-    studentinfo: studentinfo,
-    status: status,
-  };
+    lessonId: lessonId,
+    studentId: studentId,
+  });
 
-  DUMMY_LESSONS.push(newLesson);
-
-  res.status(200).json({ lesson: newLesson });
+  newLesson
+    .save()
+    .then((newLesson) => {
+      res.status(200).json({ lesson : newLesson });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.updateLesson = (req, res, next) => {
-  const { id, subject, time, place, price, studentinfo, status } = req.body;
+  const { 
+    subject, 
+    comment_from_st, 
+    date, 
+    place, 
+    lessonId, 
+    studentId } = req.body;
 
-  const lessonId = req.params.lessonId;
-  lesson = DUMMY_LESSONS.find((lesson) => {
-    return lessonId === lesson.id.toString();
-  });
+    Lesson.findById(LessonId)
+    .then((lesson) => {
+      if (!lesson) {
+        throw "Update failed: lesson not found!";
+      }
 
-  lesson.subject = subject; // currently updating only subject
+      lesson.subject = subject;
+      lesson.comment_from_st = comment_from_st;
+      lesson.date = date;
+      lesson.place = place;
+      lesson.lessonId = lessonId;
+      lesson.studentId = studentId;
 
-  res.status(200).json({ lesson: lesson });
+      return lesson.save();
+    })
+    .then((student) => {
+      res.status(200).json({ student: student });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };
 
 exports.deleteLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
 
-  // removing teacher
-  filtered = DUMMY_LESSONS.filter((lesson) => {
-    return lesson.id != lessonId;
-  });
-
-  DUMMY_LESSONS = filtered;
-
-  res.status(200).json({ lessons: DUMMY_LESSONS });
+  Lesson.findByIdAndRemove(lessonId)
+    .then(() => {
+      res.status(200).json({ message: "Successfuly deleted lesson!" });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
 };

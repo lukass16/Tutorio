@@ -4,6 +4,9 @@ const studentsController = require('../controllers/students');
 
 const router = express.Router();
 
+// GET /api/students/
+router.get('/', studentsController.getStudents);
+
 // GET /api/students/:studentId
 router.get('/:studentId', studentsController.getStudent);
 
