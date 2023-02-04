@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { useFormik } from "formik";
 import FullCalendar, { formatDate } from "@fullcalendar/react";
@@ -21,13 +21,51 @@ const style = {
   p: 4,
 };
 
+const DUMMY_LESSONS = [
+  {
+    id: 1,
+    subject: "Physics",
+    comment_from_st: "",
+    start: Date.now(),
+    end: Date.now() + 3.6e6 * 2,
+    place: "Somewhere",
+  },
+  {
+    id: 2,
+    subject: "Math",
+    comment_from_st: "",
+    start: Date.now() - 8.64e7,
+    end: Date.now() - 8.64e7 + 3.6e6,
+    place: "Somewhere",
+  },
+];
+
 let selectedEventId;
 let editing = false;
+
+// https://fullcalendar.io/docs/events-json-feed
+// could potentially use multiple event sources that filter out only active lessons etc and apply custom options to them
+// todo: add custom color rendering
 
 const Calendar = () => {
   const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  useEffect(() => {
+    console.log("Use Effect has triggered!");
+    const calendarApi = cal.current.getApi();
+    DUMMY_LESSONS.map((lesson) => {
+      let newEvent = {};
+      newEvent.id = `${lesson.id}`;
+      newEvent.title = lesson.subject;
+      newEvent.start = lesson.start;
+      newEvent.end = lesson.start;
+      newEvent.allDay = false;
+
+      calendarApi.addEvent(newEvent);
+    });
+  }, []);
 
   // using the Formik hook
   const formik = useFormik({
@@ -78,7 +116,6 @@ const Calendar = () => {
 
         setOpenEditModal(false);
       }
-
     },
   });
 
@@ -113,7 +150,6 @@ const Calendar = () => {
       const calendarApi = cal.current.getApi();
       calendarApi.getEventById(selectedEventId).remove();
     }
-
   };
 
   const handleDelete = () => {
@@ -153,7 +189,6 @@ const Calendar = () => {
               id="subject"
               name="subject"
               label="Subject"
-              defaultValue=""
               variant="filled"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -164,7 +199,6 @@ const Calendar = () => {
               id="place"
               name="place"
               label="Place"
-              defaultValue=""
               variant="filled"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -175,7 +209,6 @@ const Calendar = () => {
               id="price"
               name="price"
               label="Price"
-              defaultValue=""
               variant="filled"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -211,7 +244,7 @@ const Calendar = () => {
             dayMaxEvents={true}
             select={handleDateSelect}
             eventClick={handleEventClick}
-            eventsSet={(events) => setCurrentEvents(events)}
+            eventsSet={(events) => setCurrentEvents(events)} // sets events
             initialEvents={[
               {
                 id: "12315",
