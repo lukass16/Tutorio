@@ -5,7 +5,7 @@ const Lesson = require("../models/lesson");
 exports.getLessons = (req, res, next) => {
   Lesson.find()
     .then((lessons) => {
-      res.status(200).json({ lessons : lessons });
+      res.status(200).json({ lessons: lessons });
     })
     .catch((err) => {
       console.log(err);
@@ -29,27 +29,22 @@ exports.getLesson = (req, res, next) => {
 };
 
 exports.createLesson = (req, res, next) => {
-  const { 
-    subject, 
-    comment_from_st, 
-    date, 
-    place, 
-    lessonId, 
-    studentId } = req.body;
+  const { subject, price, comment_from_st, start, end, place, teacherId } = req.body;
 
-    const newLesson = Lesson({
+  const newLesson = Lesson({
     subject: subject,
+    price: price,
     comment_from_st: comment_from_st,
-    date: date,
+    start: start,
+    end: end,
     place: place,
-    lessonId: lessonId,
-    studentId: studentId,
+    teacherId: teacherId,
   });
 
   newLesson
     .save()
     .then((newLesson) => {
-      res.status(200).json({ lesson : newLesson });
+      res.status(200).json({ lesson: newLesson });
     })
     .catch((err) => {
       console.log(err);
@@ -59,31 +54,28 @@ exports.createLesson = (req, res, next) => {
 };
 
 exports.updateLesson = (req, res, next) => {
-  const { 
-    subject, 
-    comment_from_st, 
-    date, 
-    place, 
-    lessonId, 
-    studentId } = req.body;
+  const lessonId = req.params.lessonId;
+  const { subject, price, comment_from_st, start, end, place, studentId } = req.body;
 
-    Lesson.findById(LessonId)
+  Lesson.findById(lessonId)
     .then((lesson) => {
       if (!lesson) {
         throw "Update failed: lesson not found!";
       }
 
       lesson.subject = subject;
+      lesson.price = price;
       lesson.comment_from_st = comment_from_st;
-      lesson.date = date;
+      lesson.start = start;
+      lesson.end = end;
       lesson.place = place;
-      lesson.lessonId = lessonId;
+      // not changing teacherId as that should not change
       lesson.studentId = studentId;
 
       return lesson.save();
     })
-    .then((student) => {
-      res.status(200).json({ student: student });
+    .then((lesson) => {
+      res.status(200).json({ lesson: lesson });
     })
     .catch((err) => {
       console.log(err);
