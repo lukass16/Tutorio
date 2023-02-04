@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 
 import { useFormik } from "formik";
 import FullCalendar, { formatDate } from "@fullcalendar/react";
@@ -7,6 +7,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Box, Button, Typography, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
+
+import UserContext from "../../util/UserContext";
 
 const style = {
   position: "absolute",
@@ -51,6 +53,9 @@ const Calendar = () => {
   const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  const { user } = useContext(UserContext);
+
 
   useEffect(() => {
     console.log("Use Effect has triggered!");
@@ -168,7 +173,7 @@ const Calendar = () => {
   };
 
   return (
-    <Box m="20px">
+    <Box m="20px"> 
       <Modal
         open={openEditModal}
         onClose={handleClose}
