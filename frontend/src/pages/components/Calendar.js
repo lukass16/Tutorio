@@ -56,7 +56,6 @@ const Calendar = () => {
 
   const { user } = useContext(UserContext);
 
-
   useEffect(() => {
     console.log("Use Effect has triggered!");
     const calendarApi = cal.current.getApi();
@@ -90,7 +89,7 @@ const Calendar = () => {
           start: currentEvent.start,
           end: currentEvent.end,
           place: values.place,
-          teacherId: "DUMMY DATA",
+          teacherId: user[0],
         };
 
         currentEvent.setProp("title", values.subject);
@@ -113,13 +112,36 @@ const Calendar = () => {
           start: currentEvent.start,
           end: currentEvent.end,
           place: values.place,
-          teacherId: "DUMMY DATA",
+          teacherId: user[1],
         };
 
         console.log("Successfully created lesson");
         console.log(newLesson);
 
         setOpenEditModal(false);
+
+        // add lesson to database
+        fetch("http://localhost:5000/api/lessons", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...newLesson,
+          }),
+        })
+          .then((res) => {
+            // if response failed
+            if (res.status === 500) {
+              res.json().then((data) => {
+                throw new Error(data.message);
+              });
+            }
+            return res.json();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
   });
@@ -173,7 +195,7 @@ const Calendar = () => {
   };
 
   return (
-    <Box m="20px"> 
+    <Box m="20px">
       <Modal
         open={openEditModal}
         onClose={handleClose}
