@@ -10,7 +10,7 @@ import Modal from "@mui/material/Modal";
 
 import UserContext from "../../util/UserContext";
 
-const style = {
+const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -42,6 +42,7 @@ const DUMMY_LESSONS = [
   },
 ];
 
+const selectedEvent = {};
 let selectedEventId;
 let editing = false;
 
@@ -89,38 +90,63 @@ const Calendar = () => {
           start: currentEvent.start,
           end: currentEvent.end,
           place: values.place,
-          teacherId: user[0],
+          teacherId: user[1],
         };
 
-        currentEvent.setProp("title", values.subject);
+        let resStatus;
+        fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...updatedLesson,
+          }),
+        })
+          .then((res) => {
+            resStatus = res.status;
+            return res.json();
+          })
+          .then((data) => {
+            // if response failed
+            if (resStatus === 500) {
+              throw new Error(data.message);
+              return;
+            }
 
-        console.log("Successfully updated lesson");
-        console.log(updatedLesson);
+            // change what needs to be changed on the client side
+            currentEvent.setProp("title", values.subject);
+
+            // testing
+            console.log("Successfully updated lesson/event");
+            console.log(data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
         //set end edit mode
         editing = false;
 
         setOpenEditModal(false);
+
+        // updating place in database
+        //todo
       } else {
         const calendarApi = cal.current.getApi();
-        const currentEvent = calendarApi.getEventById(selectedEventId);
-        currentEvent.setProp("title", values.subject);
 
         const newLesson = {
           subject: values.subject,
           price: values.price,
-          start: currentEvent.start,
-          end: currentEvent.end,
+          start: selectedEvent.start,
+          end: selectedEvent.end,
           place: values.place,
           teacherId: user[1],
         };
 
-        console.log("Successfully created lesson");
-        console.log(newLesson);
-
-        setOpenEditModal(false);
-
         // add lesson to database
+        let _id;
+        let resStatus;
         fetch("http://localhost:5000/api/lessons", {
           method: "POST",
           headers: {
@@ -131,58 +157,98 @@ const Calendar = () => {
           }),
         })
           .then((res) => {
-            // if response failed
-            if (res.status === 500) {
-              res.json().then((data) => {
-                throw new Error(data.message);
-              });
-            }
+            resStatus = res.status;
             return res.json();
+          })
+          .then((data) => {
+            // if response failed
+            if (resStatus === 500) {
+              throw new Error(data.message);
+              return;
+            }
+            _id = data.lesson._id; // should eventually add better error handling here
+
+            const newEvent = {
+              id: _id,
+              title: values.subject,
+              start: selectedEvent.start,
+              end: selectedEvent.end,
+              allDay: selectedEvent.allDay,
+            };
+
+            calendarApi.addEvent(newEvent);
+
+            // testing
+            console.log("Successfully new lesson/event");
+            console.log(newEvent);
           })
           .catch((err) => {
             console.log(err);
           });
+
+        setOpenEditModal(false);
+        calendarApi.unselect();
       }
     },
   });
 
-  const handleClose = () => setOpenEditModal(false);
+  const handleClose = () => {
+    setOpenEditModal(false);
+    editing = false;
+  };
 
   const handleDateSelect = (selected) => {
-    setOpenEditModal(true);
-
-    const calendarApi = selected.view.calendar;
-    calendarApi.unselect();
-
-    const selectedEvent = {};
-
-    selectedEvent.id = `${selected.startStr}`;
-    selectedEventId = selectedEvent.id; // setting current selected event id
-    selectedEvent.title = "";
-    selectedEvent.start = selected.startStr;
-    selectedEvent.end = selected.endStr;
+    // when an event is selected we retrieve all the selection info and open the modal
+    selectedEvent.start = selected.start;
+    selectedEvent.end = selected.end;
     selectedEvent.allDay = selected.allDay;
 
-    calendarApi.addEvent(selectedEvent);
+    setOpenEditModal(true);
   };
 
   const handleCancel = (e) => {
     if (editing) {
+      e.preventDefault();
       const calendarApi = cal.current.getApi();
       calendarApi.unselect();
       setOpenEditModal(false);
+      editing = false;
     } else {
       e.preventDefault();
       setOpenEditModal(false);
-      const calendarApi = cal.current.getApi();
-      calendarApi.getEventById(selectedEventId).remove();
     }
   };
 
   const handleDelete = () => {
     const calendarApi = cal.current.getApi();
-    calendarApi.getEventById(selectedEventId).remove();
 
+    let resStatus;
+    fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        resStatus = res.status;
+        return res.json();
+      })
+      .then((data) => {
+        // if response failed
+        if (resStatus === 500) {
+          throw new Error(data.message);
+          return;
+        }
+
+        // change what needs to be changed on the client side
+        calendarApi.getEventById(selectedEventId).remove();
+
+        // testing
+        console.log("Successfully deleted lesson/event");
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    editing = false;
     setOpenEditModal(false);
   };
 
@@ -203,7 +269,7 @@ const Calendar = () => {
         aria-describedby="modal-modal-description"
       >
         <Box
-          sx={style}
+          sx={modalStyle}
           component="form"
           onSubmit={formik.handleSubmit}
           noValidate
@@ -264,7 +330,7 @@ const Calendar = () => {
               right: "timeGridWeek,timeGridDay",
             }}
             initialView="timeGridWeek"
-            editable={true}
+            editable={false} // whether the events can be dragged and resized, can later implement this to true
             selectable={true}
             selectMirror={true}
             selectOverlap={false}
