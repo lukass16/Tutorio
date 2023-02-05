@@ -60,6 +60,8 @@ const Calendar = () => {
   useEffect(() => {
     console.log("Use Effect has triggered!");
     const calendarApi = cal.current.getApi();
+
+    
     DUMMY_LESSONS.map((lesson) => {
       let newEvent = {};
       newEvent.id = `${lesson.id}`;

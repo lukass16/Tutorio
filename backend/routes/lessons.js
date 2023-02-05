@@ -7,9 +7,10 @@ const router = express.Router();
 // GET /api/lessons/:lessonId
 router.get('/:lessonId', lessonsController.getLesson);
 
-// GET /api/lessons/:teacherId
+// GET /api/lessons/teacher/:teacherId
+router.get('/teacher/:teacherId', lessonsController.getLessonsTeacher);
 
-// GET /api/lessons/:studentId
+// GET /api/lessons/student/:studentId
 
 // POST /api/lessons/
 router.post('/', lessonsController.createLesson);
