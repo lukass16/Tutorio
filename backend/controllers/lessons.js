@@ -32,8 +32,8 @@ exports.getLesson = (req, res, next) => {
 exports.getLessonsTeacher = (req, res, next) => {
   const teacherId = req.params.teacherId;
 
-  Teacher
-    .findById(teacherId).populate("lessons")
+  Teacher.findById(teacherId)
+    .populate("lessons")
     .then((teacher) => {
       if (!teacher) {
         throw "Cannot retrieve lessons: teacher ID not found!";
@@ -47,7 +47,7 @@ exports.getLessonsTeacher = (req, res, next) => {
     });
 };
 
-exports.createLesson = (req, res, next) => {
+exports.createLesson = async (req, res, next) => {
   const { subject, price, comment_from_st, start, end, place, teacherId } =
     req.body;
 
@@ -61,16 +61,28 @@ exports.createLesson = (req, res, next) => {
     teacherId: teacherId,
   });
 
-  newLesson
-    .save()
-    .then((newLesson) => {
-      res.status(200).json({ lesson: newLesson });
-    })
-    .catch((err) => {
-      console.log(err);
-      const error = new Error(err);
-      return next(error);
-    });
+  // finding referenced teacher
+  let teacher = null;
+  try {
+    teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      throw "Update failed: lesson not found!";
+    }
+  } catch (err) {
+    return next(err);
+  }
+
+  // saving lesson and adding the lesson to the teacher's lessons
+  try {
+    // todo - make this into a transaction
+    await newLesson.save();
+    teacher.lessons.push(newLesson);
+    await teacher.save();
+  } catch (err) {
+    return next(err);
+  }
+
+  res.status(200).json({ lesson: newLesson });
 };
 
 exports.updateLesson = (req, res, next) => {
