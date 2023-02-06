@@ -38,7 +38,7 @@ exports.getLessonsTeacher = (req, res, next) => {
       if (!teacher) {
         throw "Cannot retrieve lessons: teacher ID not found!";
       }
-      res.status(200).json({ lessons: teacher });
+      res.status(200).json({ lessons: teacher.lessons });
     })
     .catch((err) => {
       console.log(err);
@@ -120,8 +120,21 @@ exports.updateLesson = (req, res, next) => {
 exports.deleteLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
 
-  Lesson.findByIdAndRemove(lessonId)
+  Lesson.findById(lessonId)
+    .then((lesson) => {
+      if(!lesson)
+      {
+        throw "Lesson not found, unable to delete!";
+      }
+      return Teacher.findById(lesson.teacherId);
+    })
+    .then((teacher) => {
+      let index = teacher.lessons.indexOf(lessonId);
+      teacher.lessons.splice(index, 1);
+      return teacher.save();
+    })
     .then(() => {
+      Lesson.findByIdAndRemove(lessonId);
       res.status(200).json({ message: "Successfuly deleted lesson!" });
     })
     .catch((err) => {
