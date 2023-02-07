@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,7 +38,7 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`,
   };
 }
 
@@ -47,12 +46,10 @@ var Name = "Jessica";
 var Surname = "White";
 
 const Basic = () => {
-
-  
   const bull = (
     <Box
       component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+      sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
     >
       •
     </Box>
@@ -61,12 +58,12 @@ const Basic = () => {
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
         <Typography sx={{ fontSize: 20 }} color="text.secondary" gutterBottom>
-          Logged in as: {Name} {Surname} 
+          Logged in as: {Name} {Surname}
         </Typography>
-        </CardContent>
+      </CardContent>
     </Card>
   );
-}
+};
 
 const MyInfo = () => {
   const Edit = () => {
@@ -74,64 +71,65 @@ const MyInfo = () => {
       <Card>
         <form>
           <label>
-            Name: 
-            <input type="text" name="name"  id = "Name" />
+            Name:
+            <input type="text" name="name" id="Name" />
           </label>
           <label>
-            Surname: 
+            Surname:
             <input type="text" name="surname" />
           </label>
           <input type="submit" value="Submit" />
         </form>
-        </Card>
-        );
-  }
-    const [mode, setMode] = useState ("look");
-    const bull = (
-    <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-      •
-    </Box>)
-    return(
-    <div>
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          My Info
-        </Typography>
-        <Typography variant="h5" component="div">
-          Name: {Name}
-        </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          Surname: {Surname}
-        </Typography>
-        <Typography variant="body2">
-          Role:
-          <br />
-          {'"Student/Teacher"'}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small" onClick={() => setMode(["editing"])}>Edit Info</Button>
-      </CardActions>
-    </Card>
-    <div>
-    {mode[0] === "looking" && <MyInfo />}
-    {mode[0] === "editing" && <Edit />}
-    </div>
-    </div>
+      </Card>
     );
-}
-
-
-const MyDescription = () => {
-
+  };
+  const [mode, setMode] = useState("look");
   const bull = (
     <Box
       component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+      sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
+    >
+      •
+    </Box>
+  );
+  return (
+    <div>
+      <Card sx={{ minWidth: 275 }}>
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            My Info
+          </Typography>
+          <Typography variant="h5" component="div">
+            Name: {Name}
+          </Typography>
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            Surname: {Surname}
+          </Typography>
+          <Typography variant="body2">
+            Role:
+            <br />
+            {'"Student/Teacher"'}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="small" onClick={() => setMode(["editing"])}>
+            Edit Info
+          </Button>
+        </CardActions>
+      </Card>
+      <div>
+        {mode[0] === "looking" && <MyInfo />}
+        {mode[0] === "editing" && <Edit />}
+      </div>
+    </div>
+  );
+};
+
+const MyDescription = () => {
+  const bull = (
+    <Box
+      component="span"
+      sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
     >
       •
     </Box>
@@ -148,14 +146,13 @@ const MyDescription = () => {
       </CardActions>
     </Card>
   );
-}
+};
 
 const MyContacts = () => {
-
   const bull = (
     <Box
       component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+      sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
     >
       •
     </Box>
@@ -178,52 +175,91 @@ const MyContacts = () => {
       </CardActions>
     </Card>
   );
-}
-
-
+};
 
 export default function VerticalTabs() {
   const [value, setValue] = React.useState(0);
+  // const { user } = useContext(UserContext); // get user for which the profile page is opened (Note: currently can only see profile page of oneself, in the future, when viewing the profile page, the user's id should be encoded in the route)
+
+  // //* Fetching logic
+  // useEffect(() => {
+  //   console.log("Use Effect has triggered!");
+
+  //   // fetching lessons from backend
+  //   fetch(`http://localhost:5000/api/teacher/teacher/${user[1]}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((res) => {
+  //       resStatus = res.status;
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       // if response failed
+  //       if (resStatus === 500) {
+  //         throw new Error(data.message);
+  //         return;
+  //       }
+  //       console.log(data.lessons);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+
+  //   DUMMY_LESSONS.map((lesson) => {
+  //     let newEvent = {};
+  //     newEvent.id = `${lesson.id}`;
+  //     newEvent.title = lesson.subject;
+  //     newEvent.start = lesson.start;
+  //     newEvent.end = lesson.start;
+  //     newEvent.allDay = false;
+
+  //     calendarApi.addEvent(newEvent);
+  //   });
+  // }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <div><Basic/>
-    <Box
-      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}
-    >
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider' }}
+    <div>
+      <Basic />
+      <Box
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.paper",
+          display: "flex",
+          height: 224,
+        }}
       >
-        <Tab label="My Info" {...a11yProps(0)} />
-        <Tab label="My Description" {...a11yProps(1)} />
-        <Tab label="My Contacts" {...a11yProps(2)} />
-
-      </Tabs>
-      <TabPanel value={value} index={0}>
-        <MyInfo/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <MyDescription/>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <MyContacts/>
-      </TabPanel>
-
-    </Box>
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={value}
+          onChange={handleChange}
+          aria-label="Vertical tabs example"
+          sx={{ borderRight: 1, borderColor: "divider" }}
+        >
+          <Tab label="My Info" {...a11yProps(0)} />
+          <Tab label="My Description" {...a11yProps(1)} />
+          <Tab label="My Contacts" {...a11yProps(2)} />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          <MyInfo />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <MyDescription />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <MyContacts />
+        </TabPanel>
+      </Box>
     </div>
   );
 }
-
-
-
 
 // export default function Profile() {
 //   //const [user, setUser] = useState(["Teacher", TEACHERID]); // state contains user type and user ID
@@ -247,7 +283,7 @@ export default function VerticalTabs() {
 //           {user[0] === "Student" && <StudentApp />}
 //           {user[0] === "Teacher" && <TeacherApp />}
 //         </div>
-//       {/* </UserContext.Provider> */} 
+//       {/* </UserContext.Provider> */}
 //     </div>
 //   );
 // }
