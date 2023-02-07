@@ -11,6 +11,7 @@ router.get('/:lessonId', lessonsController.getLesson);
 router.get('/teacher/:teacherId', lessonsController.getLessonsTeacher);
 
 // GET /api/lessons/student/:studentId
+router.get('/student/:studentId', lessonsController.getLessonsStudent);
 
 // POST /api/lessons/
 router.post('/', lessonsController.createLesson);

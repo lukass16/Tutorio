@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -10,32 +10,37 @@ import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
 import { Button, Typography } from "@mui/material";
 
-let DUMMY_TEACHERS = [
-  {
-    id: 1,
-    name: "Sherlock",
-    surname: "Holmes",
-    email: "mysteries@fake.com",
-    phoneNumber: "+371 20001607",
-    description: "Likes to solve mysteries",
-    password: "Watson",
-    subjects: ["Detectiveness"],
-    lessons: [],
-  },
-  {
-    id: 2,
-    name: "John",
-    surname: "Watson",
-    email: "mysteries2@fake.com",
-    phoneNumber: "+371 22201607",
-    description: "Likes to solve mysteries",
-    password: "Sherlock",
-    subjects: ["Assistance"],
-    lessons: [],
-  },
-];
-
 const FindLesson = (props) => {
+  const [teachersList, setTeachersList] = useState();
+
+  // //* Fetching logic
+  useEffect(() => {
+    console.log("Use Effect has triggered!");
+
+    let resStatus;
+    fetch(`http://localhost:5000/api/teachers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        resStatus = res.status;
+        return res.json();
+      })
+      .then((data) => {
+        // if response failed
+        if (resStatus === 500) {
+          throw new Error(data.message);
+          return;
+        }
+        console.log("Successfully fetched teachers");
+        setTeachersList(data.teachers);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <>
       <Container>
@@ -55,9 +60,10 @@ const FindLesson = (props) => {
         </Box>
       </Container>
 
-      <Box>
-        {DUMMY_TEACHERS.map((teacher) => (
-          <Card key={teacher.id} sx={{ maxWidth: 300, minHeight: 400, m: 5}}>
+      <Box sx={{ display: "flex", flexWrap: "wrap"}}>
+        {teachersList &&        
+        teachersList.map((teacher) => (
+          <Card key={teacher._id} sx={{ maxWidth: 300, minHeight: 400, m: 5 }}>
             <CardContent>
               <Box
                 sx={{
@@ -66,7 +72,7 @@ const FindLesson = (props) => {
                   justifyContent: "center",
                 }}
               >
-                <Avatar justifyContent="center" sx={{ width: 56, height: 56 }}>
+                <Avatar sx={{ width: 56, height: 56, justifyContent: "center" }}>
                   {teacher.name + " " + teacher.surname}
                 </Avatar>
                 <Typography align="center" variant="h5">
@@ -81,6 +87,7 @@ const FindLesson = (props) => {
               <Button>See more</Button>
             </CardActions>
           </Card>
+
         ))}
       </Box>
     </>

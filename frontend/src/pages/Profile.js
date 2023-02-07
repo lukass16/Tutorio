@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -8,6 +8,8 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
+
+import UserContext from "../util/UserContext";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -179,46 +181,66 @@ const MyContacts = () => {
 
 export default function VerticalTabs() {
   const [value, setValue] = React.useState(0);
-  // const { user } = useContext(UserContext); // get user for which the profile page is opened (Note: currently can only see profile page of oneself, in the future, when viewing the profile page, the user's id should be encoded in the route)
+  const { user } = useContext(UserContext); // get user for which the profile page is opened (Note: currently can only see profile page of oneself, in the future, when viewing the profile page, the user's id should be encoded in the route)
 
+  let currentUser; // the current user for which we retreive the profile data - all of the data of the user will be availabe in this object
   // //* Fetching logic
-  // useEffect(() => {
-  //   console.log("Use Effect has triggered!");
+  useEffect(() => {
+    console.log("Use Effect has triggered!");
 
-  //   // fetching lessons from backend
-  //   fetch(`http://localhost:5000/api/teacher/teacher/${user[1]}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       resStatus = res.status;
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       // if response failed
-  //       if (resStatus === 500) {
-  //         throw new Error(data.message);
-  //         return;
-  //       }
-  //       console.log(data.lessons);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-
-  //   DUMMY_LESSONS.map((lesson) => {
-  //     let newEvent = {};
-  //     newEvent.id = `${lesson.id}`;
-  //     newEvent.title = lesson.subject;
-  //     newEvent.start = lesson.start;
-  //     newEvent.end = lesson.start;
-  //     newEvent.allDay = false;
-
-  //     calendarApi.addEvent(newEvent);
-  //   });
-  // }, []);
+    // fetching user from backend
+    // Note: Since this (Profile.js) component is independent from the user type, i.e. we use the same component for teacher or student, here I check with an if whether we have a student or teacher, to fetch the correct API Endpoint
+    let resStatus;
+    if (user[0] == "Teacher") {
+      fetch(`http://localhost:5000/api/teachers/${user[1]}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          resStatus = res.status;
+          return res.json();
+        })
+        .then((data) => {
+          // if response failed
+          if (resStatus === 500) {
+            throw new Error(data.message);
+            return;
+          }
+          console.log("Successfully fetched teacher");
+          console.log(data.teacher);
+          currentUser = data.teacher;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (user[0] == "Student") {
+      fetch(`http://localhost:5000/api/students/${user[1]}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          resStatus = res.status;
+          return res.json();
+        })
+        .then((data) => {
+          // if response failed
+          if (resStatus === 500) {
+            throw new Error(data.message);
+            return;
+          }
+          console.log("Successfully fetched student");
+          console.log(data.student);
+          currentUser = data.student;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [user]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

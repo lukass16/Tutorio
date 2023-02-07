@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Lesson = require("../models/lesson");
 const Teacher = require("../models/teacher");
+const Student = require("../models/student");
 
 exports.getLessons = (req, res, next) => {
   Lesson.find()
@@ -39,6 +40,24 @@ exports.getLessonsTeacher = (req, res, next) => {
         throw "Cannot retrieve lessons: teacher ID not found!";
       }
       res.status(200).json({ lessons: teacher.lessons });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      return next(error);
+    });
+};
+
+exports.getLessonsStudent = (req, res, next) => {
+  const studentId = req.params.studentId;
+
+  Student.findById(studentId)
+    .populate("lessons")
+    .then((student) => {
+      if (!student) {
+        throw "Cannot retrieve lessons: student ID not found!";
+      }
+      res.status(200).json({ lessons: student.lessons });
     })
     .catch((err) => {
       console.log(err);
