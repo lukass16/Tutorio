@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 
-const Signup = () => {
+const SignupStudent = () => {
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -17,11 +17,9 @@ const Signup = () => {
         email: values.email,
         phone: values.phone,
         password: values.password,
-        description: null,
-        subjects: [],
         lessons: [],
       };
-      fetch(`http://localhost:5000/api/teachers/signup`, {
+      fetch(`http://localhost:5000/api/students/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,4 +82,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupStudent;

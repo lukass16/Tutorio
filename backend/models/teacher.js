@@ -7,7 +7,7 @@ const teacherSchema = new Schema({
   surname: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
-  description: { type: String, required: true },
+  description: { type: String, required: false },
   password: { type: String, required: true },
   subjects: [{type: String, required: true}],
   lessons: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Lesson' }]
