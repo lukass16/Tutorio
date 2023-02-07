@@ -75,7 +75,11 @@ const ViewCalendar = () => {
           newEvent.allDay = false;
           newEvent.backgroundColor = "rgb(255,0,0)";
           newEvent.borderColor = "#ff0000";
-
+          newEvent.extendedProps = {};
+          // testing
+          if (lesson.subject != "Math") {
+            newEvent.extendedProps.hasRegistered = true;
+          }
           calendarApi.addEvent(newEvent);
         });
       })
@@ -92,83 +96,75 @@ const ViewCalendar = () => {
     onSubmit: (values) => {
       const calendarApi = cal.current.getApi();
       const currentEvent = calendarApi.getEventById(selectedEventId);
-
       const updatedLesson = {
         comment_from_st: values.comment_from_st,
       };
 
-      console.log("Updated lesson");
-
-      setOpenEditModal(false);
+      if (editing) {
+        console.log("Updated lesson");
+        setOpenEditModal(false);
+      } else {
+        console.log("Registered lesson");
+        setOpenEditModal(false);
+      }
     },
   });
 
   const handleClose = () => {
-    setOpenEditModal(false);
     editing = false;
-  };
-
-  const handleDateSelect = (selected) => {
-    // when an event is selected we retrieve all the selection info and open the modal
-    selectedEvent.start = selected.start;
-    selectedEvent.end = selected.end;
-    selectedEvent.allDay = selected.allDay;
-
-    setOpenEditModal(true);
+    setOpenEditModal(false);
   };
 
   const handleCancel = (e) => {
-    if (editing) {
-      e.preventDefault();
-      const calendarApi = cal.current.getApi();
-      calendarApi.unselect();
-      setOpenEditModal(false);
-      editing = false;
-    } else {
-      e.preventDefault();
-      setOpenEditModal(false);
-    }
+    editing = false;
+    e.preventDefault();
+    setOpenEditModal(false);
   };
 
-  const handleDelete = () => {
+  const handleUnregister = () => {
     const calendarApi = cal.current.getApi();
 
-    let resStatus;
-    fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
-      method: "DELETE",
-    })
-      .then((res) => {
-        resStatus = res.status;
-        return res.json();
-      })
-      .then((data) => {
-        // if response failed
-        if (resStatus === 500) {
-          throw new Error(data.message);
-          return;
-        }
+    // let resStatus;
+    // fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
+    //   method: "DELETE",
+    // })
+    //   .then((res) => {
+    //     resStatus = res.status;
+    //     return res.json();
+    //   })
+    //   .then((data) => {
+    //     // if response failed
+    //     if (resStatus === 500) {
+    //       throw new Error(data.message);
+    //       return;
+    //     }
 
-        // change what needs to be changed on the client side
-        calendarApi.getEventById(selectedEventId).remove();
+    //     // change what needs to be changed on the client side
+    //     calendarApi.getEventById(selectedEventId).remove();
 
-        // testing
-        console.log("Successfully deleted lesson/event");
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    //     // testing
+    //     console.log("Successfully deleted lesson/event");
+    //     console.log(data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
 
-    editing = false;
-    setOpenEditModal(false);
+    // editing = false;
+    // setOpenEditModal(false);
   };
 
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
     console.log("Clicked on: " + selectedEventId);
 
-    //set start edit mode
-    editing = true;
+    // check if the student has already registered for this lesson
+    if (selected.event.extendedProps.hasRegistered) {
+      // if so, set editing mode
+      editing = true;
+      console.log("This student has registered for this lesson");
+    }
+
     setOpenEditModal(true);
   };
 
@@ -200,10 +196,10 @@ const ViewCalendar = () => {
               value={formik.values.subject}
             />
           </div>
-          <Button type="submit">{editing ? "Update" : "Submit"}</Button>
+          <Button type="submit">{editing ? "Update" : "Register"}</Button>
           <Button onClick={handleCancel}>Cancel</Button>
           {editing && (
-            <Button onClick={handleDelete} variant="danger">
+            <Button onClick={handleUnregister} variant="danger">
               Unregister
             </Button>
           )}
@@ -223,11 +219,10 @@ const ViewCalendar = () => {
             }}
             initialView="timeGridWeek"
             editable={false} // whether the events can be dragged and resized, can later implement this to true
-            selectable={true}
+            selectable={false}
             selectMirror={true}
             selectOverlap={false}
             dayMaxEvents={true}
-            select={handleDateSelect}
             eventClick={handleEventClick}
             eventsSet={(events) => setCurrentEvents(events)} // sets events
             initialEvents={[]}
