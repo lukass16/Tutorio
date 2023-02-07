@@ -67,16 +67,16 @@ exports.getLessonsStudent = (req, res, next) => {
 };
 
 exports.createLesson = async (req, res, next) => {
-  const { subject, price, comment_from_st, start, end, place, teacherId } =
+  const { subject, price, start, end, place, teacherId } =
     req.body;
 
   const newLesson = Lesson({
     subject: subject,
     price: price,
-    comment_from_st: comment_from_st,
     start: start,
     end: end,
     place: place,
+    status: "AVAILABLE",
     teacherId: teacherId,
   });
 
@@ -106,7 +106,7 @@ exports.createLesson = async (req, res, next) => {
 
 exports.updateLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
-  const { subject, price, comment_from_st, start, end, place, studentId } =
+  const { subject, price, comment_from_st, start, end, place, status, studentId } =
     req.body;
 
   Lesson.findById(lessonId)
@@ -115,14 +115,15 @@ exports.updateLesson = (req, res, next) => {
         throw "Update failed: lesson not found!";
       }
 
-      lesson.subject = subject;
-      lesson.price = price;
-      lesson.comment_from_st = comment_from_st;
-      lesson.start = start;
-      lesson.end = end;
-      lesson.place = place;
-      // not changing teacherId as that should not change
-      lesson.studentId = studentId;
+      // checking if incoming data is null or undefined, if not, update the lesson
+      lesson.subject = subject ?? lesson.subject;
+      lesson.price = price ?? lesson.price;
+      lesson.comment_from_st = comment_from_st ?? lesson.comment_from_st;
+      lesson.start = start ?? lesson.start;
+      lesson.end = end ?? lesson.end;
+      lesson.place = place ?? lesson.place;
+      lesson.status = status ?? lesson.status;
+      lesson.studentId = studentId ?? lesson.studentId;
 
       return lesson.save();
     })
