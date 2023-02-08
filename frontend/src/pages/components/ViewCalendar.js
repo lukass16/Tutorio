@@ -73,14 +73,21 @@ const ViewCalendar = () => {
           newEvent.start = lesson.start;
           newEvent.end = lesson.end;
           newEvent.allDay = false;
-          newEvent.backgroundColor = "rgb(255,0,0)";
-          newEvent.borderColor = "#ff0000";
+          newEvent.borderColor = "#ffffff";
           newEvent.extendedProps = {};
-          // testing
-          if (lesson.subject != "Math") {
-            newEvent.extendedProps.hasRegistered = true;
+          newEvent.extendedProps.hasRegistered = "false";
+
+          // checking if lesson is not available
+          if (lesson.status != "AVAILABLE") {
+            if (lesson.studentId == user[1]) {
+              console.log("Rendering lesson that is registered for this user");
+              newEvent.backgroundColor = "#A020F0";
+              newEvent.extendedProps.hasRegistered = "true"; // indicating that this student has registered for this lesson
+              calendarApi.addEvent(newEvent);
+            }
+          } else {
+            calendarApi.addEvent(newEvent);
           }
-          calendarApi.addEvent(newEvent);
         });
       })
       .catch((err) => {
@@ -136,6 +143,7 @@ const ViewCalendar = () => {
         let resStatus;
         // setting lesson status as requested
         updatedLesson.status = "REQUESTED";
+        updatedLesson.studentId = user[1];
 
         // sending changes to database
         fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
@@ -159,6 +167,10 @@ const ViewCalendar = () => {
             }
             console.log("Registered lesson");
             console.log(data.lesson);
+
+            // add any necessary changes to the client side
+            currentEvent.setProp("backgroundColor", "#A020F0");
+            currentEvent.setExtendedProp("hasRegistered", "true");
           })
           .catch((err) => {
             console.log(err);
@@ -170,55 +182,74 @@ const ViewCalendar = () => {
   });
 
   const handleClose = () => {
+    const calendarApi = cal.current.getApi();
     editing = false;
     setOpenEditModal(false);
+    calendarApi.unselect();
   };
 
   const handleCancel = (e) => {
+    const calendarApi = cal.current.getApi();
+    calendarApi.unselect();
     editing = false;
     e.preventDefault();
     setOpenEditModal(false);
+    
   };
 
   const handleUnregister = () => {
     const calendarApi = cal.current.getApi();
+    const currentEvent = calendarApi.getEventById(selectedEventId);
+    const updatedLesson = {};
 
-    // let resStatus;
-    // fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
-    //   method: "DELETE",
-    // })
-    //   .then((res) => {
-    //     resStatus = res.status;
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     // if response failed
-    //     if (resStatus === 500) {
-    //       throw new Error(data.message);
-    //       return;
-    //     }
+    updatedLesson.comment_from_st = "";
+    updatedLesson.status = "AVAILABLE";
+    updatedLesson.action = "removed"; // if studentId is "removed", this indicates the controler to perform a removing action
 
-    //     // change what needs to be changed on the client side
-    //     calendarApi.getEventById(selectedEventId).remove();
+    let resStatus;
+    // sending changes to database
+    fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...updatedLesson,
+      }),
+    })
+      .then((res) => {
+        resStatus = res.status;
+        return res.json();
+      })
+      .then((data) => {
+        // if response failed
+        if (resStatus === 500) {
+          throw new Error(data.message);
+          return;
+        }
+        console.log("Unregistered lesson");
+        console.log(data.lesson);
 
-    //     // testing
-    //     console.log("Successfully deleted lesson/event");
-    //     console.log(data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+        // add any necessary changes to the client side
+        currentEvent.setProp("backgroundColor", undefined);
+        currentEvent.setExtendedProp("hasRegistered", "false");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-    // editing = false;
-    // setOpenEditModal(false);
+    editing = false;
+    setOpenEditModal(false);
   };
 
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
     console.log("Clicked on: " + selectedEventId);
+    
 
+    console.log("Has registered property: " + String(selected.event.extendedProps.hasRegistered));
     // check if the student has already registered for this lesson
-    if (selected.event.extendedProps.hasRegistered) {
+    if (selected.event.extendedProps.hasRegistered == "true") {
       // if so, set editing mode
       editing = true;
       console.log("This student has registered for this lesson");
