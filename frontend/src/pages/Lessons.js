@@ -1,8 +1,11 @@
-import React from "react";
-
+import React, { useState } from "react";
+import Button from '@mui/material/Button';
 import Container from "@mui/material/Container";
 import LessonCard from "./components/LessonCard";
 import { Stack } from "@mui/system";
+import Card from '@mui/material/Card';
+import Schedule from "./Schedule";
+
 
 let DUMMY_LESSONS = [
   {
@@ -40,11 +43,23 @@ let DUMMY_LESSONS = [
 ];
 
 const Lesson = (props) => {
+  const MoreInfo = () => {
+    
+    return (
+<Card> More info </Card>
+        );
+  }
+
+  const [mode, setMode] = useState("little");
   return (
     <Container align="center">
+                    
       <Stack spacing={1}>
         {DUMMY_LESSONS.map((lesson) => {
           return (
+            <div>
+
+            <div>
             <LessonCard
               key={lesson.id}
               it={lesson.id}
@@ -53,11 +68,22 @@ const Lesson = (props) => {
               date={lesson.time.date}
               duration={lesson.time.duration}
             />
+                 <div>
+      <Button size="small" onClick={() => setMode(["more"])}>More Info</Button>
+      <Button onClick ={() => setMode(["all"])}>See all</Button>
+          </div>
+            </div>
+            {mode[0] === "more" && <MoreInfo />}
+            {mode[0] === "little" && <Lesson />}
+            {mode[0] === "all" && <Schedule/>}
+          </div>
           );
+
         })}
       </Stack>
+
     </Container>
   );
-};
+}
 
 export default Lesson;
