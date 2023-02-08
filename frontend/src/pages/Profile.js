@@ -70,6 +70,7 @@ const Basic = () => {
 
 const MyInfo = () => {
   const Edit = () => {
+    
     return (
       <Card>
         <form>
@@ -81,11 +82,12 @@ const MyInfo = () => {
             Surname: 
             <input type="text" name="surname" />
           </label>
-          <input type="submit" value="Submit" />
+          <button type="submit" value="Submit">Submit</button>
         </form>
         </Card>
         );
   }
+
     const [mode, setMode] = useState ("look");
     const bull = (
     <Box
