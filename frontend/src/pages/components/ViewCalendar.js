@@ -101,7 +101,36 @@ const ViewCalendar = () => {
       };
 
       if (editing) {
-        console.log("Updated lesson");
+        let resStatus;
+
+        updatedLesson.status = "REQUESTED"; // Don't update status
+        // sending changes to database
+        fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...updatedLesson,
+          }),
+        })
+          .then((res) => {
+            resStatus = res.status;
+            return res.json();
+          })
+          .then((data) => {
+            // if response failed
+            if (resStatus === 500) {
+              throw new Error(data.message);
+              return;
+            }
+            console.log("Updated lesson");
+            console.log(data.lesson);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
         setOpenEditModal(false);
       } else {
         let resStatus;
@@ -135,7 +164,6 @@ const ViewCalendar = () => {
             console.log(err);
           });
 
-       
         setOpenEditModal(false);
       }
     },
