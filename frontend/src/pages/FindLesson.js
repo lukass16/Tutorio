@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
@@ -84,7 +85,7 @@ const FindLesson = (props) => {
               </Box>
             </CardContent>
             <CardActions>
-              <Button>See more</Button>
+              <Button><Link to={`/schedule/${teacher._id}`}>Register For Lesson</Link></Button>
             </CardActions>
           </Card>
 

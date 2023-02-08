@@ -67,16 +67,15 @@ exports.getLessonsStudent = (req, res, next) => {
 };
 
 exports.createLesson = async (req, res, next) => {
-  const { subject, price, comment_from_st, start, end, place, teacherId } =
-    req.body;
+  const { subject, price, start, end, place, teacherId } = req.body;
 
   const newLesson = Lesson({
     subject: subject,
     price: price,
-    comment_from_st: comment_from_st,
     start: start,
     end: end,
     place: place,
+    status: "AVAILABLE",
     teacherId: teacherId,
   });
 
@@ -106,8 +105,16 @@ exports.createLesson = async (req, res, next) => {
 
 exports.updateLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
-  const { subject, price, comment_from_st, start, end, place, studentId } =
-    req.body;
+  const {
+    subject,
+    price,
+    comment_from_st,
+    start,
+    end,
+    place,
+    status,
+    studentId,
+  } = req.body;
 
   Lesson.findById(lessonId)
     .then((lesson) => {
@@ -115,14 +122,35 @@ exports.updateLesson = (req, res, next) => {
         throw "Update failed: lesson not found!";
       }
 
-      lesson.subject = subject;
-      lesson.price = price;
-      lesson.comment_from_st = comment_from_st;
-      lesson.start = start;
-      lesson.end = end;
-      lesson.place = place;
-      // not changing teacherId as that should not change
-      lesson.studentId = studentId;
+      // checking if incoming data is null or undefined, if not, update the lesson
+      lesson.subject = subject ?? lesson.subject;
+      lesson.price = price ?? lesson.price;
+      lesson.comment_from_st = comment_from_st ?? lesson.comment_from_st;
+      lesson.start = start ?? lesson.start;
+      lesson.end = end ?? lesson.end;
+      lesson.place = place ?? lesson.place;
+      lesson.status = status ?? lesson.status;
+
+      // if request contains studentId, push this lesson to the student model, and set this lesson's studentId.
+      if (studentId) {
+        // set the lesson's studentId
+        lesson.studentId = studentId;
+
+        // find the student and push the lesson to the student's lessons
+        Student.findById(studentId)
+          .then((student) => {
+            if (!student) {
+              throw "Registration failed: student not found!";
+            }
+            student.lessons.push(lessonId);
+            return student.save();
+          })
+          .catch((err) => {
+            console.log(err);
+            const error = new Error(err);
+            return next(error); // if failed to add lesson to student, fail entire operation and don't save lesson
+          });
+      }
 
       return lesson.save();
     })
@@ -141,8 +169,7 @@ exports.deleteLesson = (req, res, next) => {
 
   Lesson.findById(lessonId)
     .then((lesson) => {
-      if(!lesson)
-      {
+      if (!lesson) {
         throw "Lesson not found, unable to delete!";
       }
       return Teacher.findById(lesson.teacherId);
