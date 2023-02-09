@@ -9,6 +9,7 @@ import Schedule from "./pages/Schedule";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
+import SignupSt from "./pages/SignupStudent";
 
 const TeacherApp = () => {
     return (
@@ -22,6 +23,7 @@ const TeacherApp = () => {
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/signup" element={<Signup />} /> 
+          <Route path="/signup-student" element={<SignupSt />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </>

@@ -61,17 +61,42 @@ const Calendar = () => {
     console.log("Use Effect has triggered!");
     const calendarApi = cal.current.getApi();
 
-    
-    DUMMY_LESSONS.map((lesson) => {
-      let newEvent = {};
-      newEvent.id = `${lesson.id}`;
-      newEvent.title = lesson.subject;
-      newEvent.start = lesson.start;
-      newEvent.end = lesson.start;
-      newEvent.allDay = false;
+    // fetching lessons from backend
+    let resStatus;
+    fetch(`http://localhost:5000/api/lessons/teacher/${user[1]}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        resStatus = res.status;
+        return res.json();
+      })
+      .then((data) => {
+        // if response failed
+        if (resStatus === 500) {
+          throw new Error(data.message);
+          return;
+        }
 
-      calendarApi.addEvent(newEvent);
-    });
+        // render all lessons to calendar
+        data.lessons.map((lesson) => {
+          let newEvent = {};
+          newEvent.id = `${lesson._id}`;
+          newEvent.title = lesson.subject;
+          newEvent.start = lesson.start;
+          newEvent.end = lesson.end;
+          newEvent.allDay = false;
+          newEvent.backgroundColor = 'rgb(255,0,0)';
+          newEvent.borderColor = '#ff0000';
+
+          calendarApi.addEvent(newEvent);
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   // using the Formik hook
@@ -256,6 +281,7 @@ const Calendar = () => {
 
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
+    console.log("Clicked on: " + selectedEventId);
 
     //set start edit mode
     editing = true;

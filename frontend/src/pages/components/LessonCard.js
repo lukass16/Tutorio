@@ -5,9 +5,13 @@ import Box from "@mui/material/Box";
 import { Button, Typography } from "@mui/material";
 
 const LessonCard = (props) => {
+
+  let startDate = new Date(props.start);
+  let endDate = new Date(props.end);
+
   return (
     <Card
-      key={props.key}
+      key={props.id}
       sx={{ my: 3, height: "100px", display: "flex", flexDirection: "row" }}
     >
       <Box
@@ -59,12 +63,12 @@ const LessonCard = (props) => {
         >
           <Box width={"100%"}>
             <Typography align="left" variant="subtitle">
-              {"Date: " + props.date}
+              {"Start: " + startDate.getDay()}
             </Typography>
           </Box>
           <Box width={"100%"}>
             <Typography align="left" variant="subtitle">
-              {"Duration: " + props.duration}
+              {"End: " + endDate.getDay()}
             </Typography>
           </Box>
         </Box>
