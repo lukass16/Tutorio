@@ -69,9 +69,10 @@ const Lesson = (props) => {
         });
     }
   }, [user]);
-
+  const [mode, setMode] = useState("little");
   return (
     <Container align="center">
+    <button onClick={() => setMode(["all"])}>See all</button>
       {lessonsList && (
         <Stack spacing={1}>
           {lessonsList.map((lesson) => {
@@ -87,7 +88,12 @@ const Lesson = (props) => {
             );
           })}
         </Stack>
+       
       )}
+      <div>
+      {mode[0] === "little" && <Lesson/>}
+      {mode[0] === "all" && <Schedule />}
+      </div>
     </Container>
   );
 }
