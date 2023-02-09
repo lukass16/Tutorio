@@ -67,8 +67,7 @@ exports.getLessonsStudent = (req, res, next) => {
 };
 
 exports.createLesson = async (req, res, next) => {
-  const { subject, price, start, end, place, teacherId } =
-    req.body;
+  const { subject, price, start, end, place, teacherId } = req.body;
 
   const newLesson = Lesson({
     subject: subject,
@@ -106,8 +105,16 @@ exports.createLesson = async (req, res, next) => {
 
 exports.updateLesson = (req, res, next) => {
   const lessonId = req.params.lessonId;
-  const { subject, price, comment_from_st, start, end, place, status, studentId } =
-    req.body;
+  const {
+    subject,
+    price,
+    comment_from_st,
+    start,
+    end,
+    place,
+    status,
+    studentId,
+  } = req.body;
 
   Lesson.findById(lessonId)
     .then((lesson) => {
@@ -123,7 +130,53 @@ exports.updateLesson = (req, res, next) => {
       lesson.end = end ?? lesson.end;
       lesson.place = place ?? lesson.place;
       lesson.status = status ?? lesson.status;
-      lesson.studentId = studentId ?? lesson.studentId;
+
+      // if request contains valid studentId, push this lesson to the student model, and set this lesson's studentId.
+      if (studentId && studentId != "removed") {
+        console.log("Adding student");
+        // set the lesson's studentId
+        lesson.studentId = studentId;
+
+        // find the student and push the lesson to the student's lessons
+        Student.findById(studentId)
+          .then((student) => {
+            if (!student) {
+              throw "Registration failed: student not found!";
+            }
+            student.lessons.push(lessonId);
+            return student.save();
+          })
+          .catch((err) => {
+            console.log(err);
+            const error = new Error(err);
+            return next(error); // if failed to add lesson to student, fail entire operation and don't save lesson
+          });
+      }
+
+      // perform necessary actions if student to lesson relationship needs to be removed
+      if (studentId == "removed") {
+        console.log("Removing student");
+
+        // find the student and remove the lesson from the student's lessons
+        Student.findById(lesson.studentId)
+          .then((student) => {
+            if (!student) {
+              throw "Registration failed: student not found!";
+            }
+            // unlink the lesson from the student
+            let index = student.lessons.indexOf(lessonId);
+            student.lessons.splice(index, 1);
+            return student.save();
+          })
+          .catch((err) => {
+            console.log(err);
+            const error = new Error(err);
+            return next(error); // if failed to remove lesson from student, fail entire operation and don't save lesson
+          });
+
+        // remove the student from the lesson
+        lesson.studentId = undefined;
+      }
 
       return lesson.save();
     })
@@ -142,8 +195,7 @@ exports.deleteLesson = (req, res, next) => {
 
   Lesson.findById(lessonId)
     .then((lesson) => {
-      if(!lesson)
-      {
+      if (!lesson) {
         throw "Lesson not found, unable to delete!";
       }
       return Teacher.findById(lesson.teacherId);

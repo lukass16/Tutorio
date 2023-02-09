@@ -88,8 +88,8 @@ const Calendar = () => {
           newEvent.start = lesson.start;
           newEvent.end = lesson.end;
           newEvent.allDay = false;
-          newEvent.backgroundColor = 'rgb(255,0,0)';
-          newEvent.borderColor = '#ff0000';
+          newEvent.backgroundColor = "rgb(255,0,0)";
+          newEvent.borderColor = "#ff0000";
 
           calendarApi.addEvent(newEvent);
         });
@@ -366,18 +366,7 @@ const Calendar = () => {
             select={handleDateSelect}
             eventClick={handleEventClick}
             eventsSet={(events) => setCurrentEvents(events)} // sets events
-            initialEvents={[
-              {
-                id: "12315",
-                title: "All-day event",
-                date: "2022-09-14",
-              },
-              {
-                id: "5123",
-                title: "Timed event",
-                date: "2022-09-28",
-              },
-            ]}
+            initialEvents={[]}
           />
         </Box>
       </Box>
