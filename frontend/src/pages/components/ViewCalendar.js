@@ -204,7 +204,7 @@ const ViewCalendar = () => {
 
     updatedLesson.comment_from_st = "";
     updatedLesson.status = "AVAILABLE";
-    updatedLesson.action = "removed"; // if studentId is "removed", this indicates the controler to perform a removing action
+    updatedLesson.studentId = "removed"; // if studentId is "removed", this indicates the controler to perform a removing action
 
     let resStatus;
     // sending changes to database

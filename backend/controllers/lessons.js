@@ -164,9 +164,11 @@ exports.updateLesson = (req, res, next) => {
               throw "Registration failed: student not found!";
             }
             // unlink the lesson from the student
+            console.log(student.lessons)
             let index = student.lessons.indexOf(lessonId);
             student.lessons.splice(index, 1);
             return student.save();
+            console.log(student.lessons);
           })
           .catch((err) => {
             console.log(err);
@@ -190,28 +192,41 @@ exports.updateLesson = (req, res, next) => {
     });
 };
 
-exports.deleteLesson = (req, res, next) => {
+exports.deleteLesson = async (req, res, next) => {
   const lessonId = req.params.lessonId;
+  let lesson, teacher, student;
 
-  Lesson.findById(lessonId)
-    .then((lesson) => {
-      if (!lesson) {
-        throw "Lesson not found, unable to delete!";
+  try {
+    // finding lesson to be deleted
+    lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+      throw "Lesson not found, unable to delete!";
+    }
+
+    // finding teacher and removing lesson from teacher's lessons
+    teacher = await Teacher.findById(lesson.teacherId);
+    let index = teacher.lessons.indexOf(lessonId);
+    teacher.lessons.splice(index, 1);
+    await teacher.save();
+
+    // finding student and removing lesson from student's lessons
+    if (lesson.studentId) {
+      student = await Student.findById(lesson.studentId);
+      if (student) {
+        index = student.lessons.indexOf(lessonId);
+        student.lessons.splice(index, 1);
+        await student.save();
       }
-      return Teacher.findById(lesson.teacherId);
-    })
-    .then((teacher) => {
-      let index = teacher.lessons.indexOf(lessonId);
-      teacher.lessons.splice(index, 1);
-      return teacher.save();
-    })
-    .then(() => {
-      Lesson.findByIdAndRemove(lessonId);
-      res.status(200).json({ message: "Successfuly deleted lesson!" });
-    })
-    .catch((err) => {
-      console.log(err);
-      const error = new Error(err);
-      return next(error);
-    });
+    }
+
+    // removing lesson
+    await Lesson.findByIdAndRemove(lessonId);
+
+    // sending response
+    res.status(200).json({ message: "Successfuly deleted lesson!" });
+  } catch (err) {
+    console.log(err);
+    const error = new Error(err);
+    return next(error);
+  }
 };
