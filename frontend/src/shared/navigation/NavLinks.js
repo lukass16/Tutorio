@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { NavLink } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
+import UserContext from "../../util/UserContext";
+
 const NavLinks = (props) => {
+  const { user } = useContext(UserContext); // get user for which the links are generated
+
   return (
-    <Stack spacing={2} direction = "row">
+    <Stack spacing={2} direction="row">
       <Button>
         <NavLink to="/">Find lesson</NavLink>
       </Button>
