@@ -50,7 +50,7 @@ let editing = false;
 // could potentially use multiple event sources that filter out only active lessons etc and apply custom options to them
 // todo: add custom color rendering
 
-const Calendar = () => {
+const TeacherCalendar = () => {
   const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -88,10 +88,18 @@ const Calendar = () => {
           newEvent.start = lesson.start;
           newEvent.end = lesson.end;
           newEvent.allDay = false;
-          newEvent.backgroundColor = "rgb(255,0,0)";
-          newEvent.borderColor = "#ff0000";
+          newEvent.borderColor = "#ffffff";
+          newEvent.extendedProps = {};
+          newEvent.extendedProps.status = lesson.status;
 
-          calendarApi.addEvent(newEvent);
+          // checking if lesson is not available
+          if (lesson.status == "AVAILABLE") {
+            calendarApi.addEvent(newEvent);
+          } else if (lesson.status == "REQUESTED") {
+            console.log("Rendering lesson that has been requested");
+            newEvent.backgroundColor = "#A020F0";
+            calendarApi.addEvent(newEvent);
+          }
         });
       })
       .catch((err) => {
@@ -374,4 +382,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default TeacherCalendar;
