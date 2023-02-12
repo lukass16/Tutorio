@@ -23,25 +23,6 @@ const modalStyle = {
   p: 4,
 };
 
-const DUMMY_LESSONS = [
-  {
-    id: 1,
-    subject: "Physics",
-    comment_from_st: "",
-    start: Date.now(),
-    end: Date.now() + 3.6e6 * 2,
-    place: "Somewhere",
-  },
-  {
-    id: 2,
-    subject: "Math",
-    comment_from_st: "",
-    start: Date.now() - 8.64e7,
-    end: Date.now() - 8.64e7 + 3.6e6,
-    place: "Somewhere",
-  },
-];
-
 const selectedEvent = {};
 let selectedEventId;
 let editing = false;
@@ -54,6 +35,7 @@ const TeacherCalendar = () => {
   const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openAcceptModal, setOpenAcceptModal] = useState(false);
 
   const { user } = useContext(UserContext);
 
@@ -227,8 +209,13 @@ const TeacherCalendar = () => {
     },
   });
 
-  const handleClose = () => {
+  const handleCloseEditModal = () => {
     setOpenEditModal(false);
+    editing = false;
+  };
+
+  const handleCloseAcceptModal = () => {
+    setOpenAcceptModal(false);
     editing = false;
   };
 
@@ -291,16 +278,31 @@ const TeacherCalendar = () => {
     selectedEventId = selected.event.id;
     console.log("Clicked on: " + selectedEventId);
 
+    if(selected.event.extendedProps.status === "REQUESTED") {
+      setOpenAcceptModal(true);
+      return;
+    }
+
     //set start edit mode
     editing = true;
     setOpenEditModal(true);
   };
 
+  const handleAccept = () => {
+    console.log("Accepting lesson");
+    setOpenAcceptModal(false);
+  }
+
+  const handleDecline = () => {
+    console.log("Declining lesson");
+    setOpenAcceptModal(false);
+  }
+
   return (
     <Box m="20px">
       <Modal
         open={openEditModal}
-        onClose={handleClose}
+        onClose={handleCloseEditModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -351,6 +353,23 @@ const TeacherCalendar = () => {
               Delete
             </Button>
           )}
+        </Box>
+      </Modal>
+      <Modal
+        open={openAcceptModal}
+        onClose={handleCloseEditModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={modalStyle}
+          component="form"
+          onSubmit={formik.handleSubmit}
+          noValidate
+          autoComplete="off"
+        >
+          <Button onClick={handleAccept}>Accept</Button>
+          <Button onClick={handleDecline}>Decline</Button>
         </Box>
       </Modal>
       <Box display="flex" justifyContent="space-between">
