@@ -9,6 +9,7 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
 import UserContext from "../../util/UserContext";
+import EditLessonModal from "./EditLessonModal";
 
 const modalStyle = {
   position: "absolute",
@@ -278,7 +279,7 @@ const TeacherCalendar = () => {
     selectedEventId = selected.event.id;
     console.log("Clicked on: " + selectedEventId);
 
-    if(selected.event.extendedProps.status === "REQUESTED") {
+    if (selected.event.extendedProps.status === "REQUESTED") {
       setOpenAcceptModal(true);
       return;
     }
@@ -291,70 +292,28 @@ const TeacherCalendar = () => {
   const handleAccept = () => {
     console.log("Accepting lesson");
     setOpenAcceptModal(false);
-  }
+  };
 
   const handleDecline = () => {
     console.log("Declining lesson");
     setOpenAcceptModal(false);
-  }
+  };
 
   return (
     <Box m="20px">
-      <Modal
+      <EditLessonModal
         open={openEditModal}
         onClose={handleCloseEditModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={modalStyle}
-          component="form"
-          onSubmit={formik.handleSubmit}
-          noValidate
-          autoComplete="off"
-        >
-          <Typography variant="h6">Confirm Lesson</Typography>
-          <div>
-            <TextField
-              required
-              id="subject"
-              name="subject"
-              label="Subject"
-              variant="filled"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.subject}
-            />
-            <TextField
-              required
-              id="place"
-              name="place"
-              label="Place"
-              variant="filled"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.place}
-            />
-            <TextField
-              required
-              id="price"
-              name="price"
-              label="Price"
-              variant="filled"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.price}
-            />
-          </div>
-          <Button type="submit">{editing ? "Update" : "Submit"}</Button>
-          <Button onClick={handleCancel}>Cancel</Button>
-          {editing && (
-            <Button onClick={handleDelete} variant="danger">
-              Delete
-            </Button>
-          )}
-        </Box>
-      </Modal>
+        onSubmit={formik.handleSubmit}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        subject={formik.values.subject}
+        place={formik.values.place}
+        price={formik.values.price}
+        handleCancel={handleCancel}
+        handleDelete={handleDelete}
+        editing={editing}
+      />
       <Modal
         open={openAcceptModal}
         onClose={handleCloseEditModal}
@@ -373,7 +332,6 @@ const TeacherCalendar = () => {
         </Box>
       </Modal>
       <Box display="flex" justifyContent="space-between">
-        {/* CALENDAR */}
         <Box flex="1 1 100%" ml="15px">
           <FullCalendar
             ref={cal}
