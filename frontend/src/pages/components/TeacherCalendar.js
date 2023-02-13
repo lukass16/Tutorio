@@ -8,6 +8,7 @@ import { Box } from "@mui/material";
 
 import UserContext from "../../util/UserContext";
 import EditLessonModal from "./EditLessonModal";
+import AcceptLessonModal from "./AcceptLessonModal";
 
 const modalStyle = {
   position: "absolute",
@@ -90,11 +91,6 @@ const TeacherCalendar = () => {
       });
   }, []);
 
-  const handleCloseAcceptModal = () => {
-    setOpenAcceptModal(false);
-    setEditing(false);
-  };
-
   const handleDateSelect = (selected) => {
     // when an event is selected we retrieve all the selection info and open the modal
     selectedEvent.start = selected.start;
@@ -102,6 +98,7 @@ const TeacherCalendar = () => {
     selectedEvent.allDay = selected.allDay;
 
     setOpenEditModal(true);
+    console.log("Got here");
   };
 
   const handleEventClick = (selected) => {
@@ -113,19 +110,8 @@ const TeacherCalendar = () => {
       return;
     }
 
-    //set start edit mode
     setEditing(true);
     setOpenEditModal(true);
-  };
-
-  const handleAccept = () => {
-    console.log("Accepting lesson");
-    setOpenAcceptModal(false);
-  };
-
-  const handleDecline = () => {
-    console.log("Declining lesson");
-    setOpenAcceptModal(false);
   };
 
   return (
@@ -134,29 +120,17 @@ const TeacherCalendar = () => {
         open={openEditModal}
         editing={editing}
         setEditing={setEditing}
-        setOpenEditModal = {setOpenEditModal}
+        setOpenEditModal={setOpenEditModal}
         selectedEventId={selectedEventId}
         selectedEvent={selectedEvent}
         user={user}
         cal = {cal}
       />
-      {/* <Modal
-      open={openAcceptModal}
-      onClose={handleCloseEditModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box
-        sx={modalStyle}
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        autoComplete="off"
-      >
-        <Button onClick={handleAccept}>Accept</Button>
-        <Button onClick={handleDecline}>Decline</Button>
-      </Box>
-    </Modal>*/}
+      {/* <AcceptLessonModal
+        open={openAcceptModal}
+        setOpenAcceptModal={setOpenAcceptModal}
+        selectedEventId={selectedEventId}
+      /> */}
      
       <Box display="flex" justifyContent="space-between">
         <Box flex="1 1 100%" ml="15px">
