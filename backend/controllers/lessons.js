@@ -132,7 +132,7 @@ exports.updateLesson = (req, res, next) => {
       lesson.status = status ?? lesson.status;
 
       // if request contains valid studentId, push this lesson to the student model, and set this lesson's studentId.
-      if (studentId && studentId != "removed") {
+      if (studentId && studentId != "removed" && studentId != "declined") {
         console.log("Adding student");
         // set the lesson's studentId
         lesson.studentId = studentId;
@@ -151,10 +151,7 @@ exports.updateLesson = (req, res, next) => {
             const error = new Error(err);
             return next(error); // if failed to add lesson to student, fail entire operation and don't save lesson
           });
-      }
-
-      // perform necessary actions if student to lesson relationship needs to be removed
-      if (studentId == "removed") {
+      } else if (studentId == "removed") {
         console.log("Removing student");
 
         // find the student and remove the lesson from the student's lessons
@@ -164,7 +161,7 @@ exports.updateLesson = (req, res, next) => {
               throw "Registration failed: student not found!";
             }
             // unlink the lesson from the student
-            console.log(student.lessons)
+            console.log(student.lessons);
             let index = student.lessons.indexOf(lessonId);
             student.lessons.splice(index, 1);
             return student.save();
@@ -178,6 +175,32 @@ exports.updateLesson = (req, res, next) => {
 
         // remove the student from the lesson
         lesson.studentId = undefined;
+      } else if (studentId == "declined") {
+        // find the student and remove the lesson from the student's lessons
+        Student.findById(lesson.studentId)
+          .then((student) => {
+            if (!student) {
+              throw "Registration failed: student not found!";
+            }
+            // unlink the lesson from the student
+            console.log(student.lessons);
+            let index = student.lessons.indexOf(lessonId);
+            student.lessons.splice(index, 1);
+            return student.save();
+            console.log(student.lessons);
+          })
+          .catch((err) => {
+            console.log(err);
+            const error = new Error(err);
+            return next(error); // if failed to remove lesson from student, fail entire operation and don't save lesson
+          });
+
+        // remove the student from the lesson
+        lesson.studentId = undefined;
+
+        // notify student that lesson has been declined
+        console.log("Lesson declined");
+        // todo - send email to student
       }
 
       return lesson.save();

@@ -190,7 +190,7 @@ const EditLessonModal = (props) => {
 
   return (
     <Modal
-      open={props.open}
+      open={props.open ?? false}
       onClose={handleCloseEditModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
