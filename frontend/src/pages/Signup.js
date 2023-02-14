@@ -31,6 +31,7 @@ const Signup = () => {
         }),
       })
       .then((res) => res.json()).then((data) => console.log(data))
+      
       //alert(JSON.stringify(values, null, 2));
     },
   });

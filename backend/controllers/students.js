@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const Student = require("../models/student");
 
+const bcrypt = require("bcryptjs");
+
 
 exports.getStudents = (req, res, next) => {
   Student.find()
@@ -39,6 +41,18 @@ exports.signup = (req, res, next) => {
     password,
     lessons,
   } = req.body;
+
+  let hashedPassword;
+  
+  //bcrypt.hashSync(password, 12).then((hashedPw) => {
+  //  hashedPassword = hashedPw;
+  //})
+  //.catch((err) => {
+  //  console.log(err);
+  //  const error = new Error(err);
+  //  return next(error);
+  //});
+
 
   const newStudent = Student({
     id: id,
@@ -112,3 +126,8 @@ exports.deleteStudent = (req, res, next) => {
       return next(error);
     });
 };
+
+exports.login = (req, res, next) => {
+  const studentId = req.params.studentId;
+  
+}

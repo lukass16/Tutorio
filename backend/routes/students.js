@@ -14,6 +14,7 @@ router.get('/:studentId', studentsController.getStudent);
 router.post('/signup', studentsController.signup);
 
 // POST /api/students/login
+router.post('/login', studentsController.login);
 
 // PATCH /api/students/:studentId
 router.patch('/:studentId', studentsController.updateStudent);

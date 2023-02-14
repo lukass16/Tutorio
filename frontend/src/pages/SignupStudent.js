@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useFormik } from "formik";
 
+import UserContext from "../util/UserContext";
+
 const SignupStudent = () => {
+  const { setUser } = useContext(UserContext);
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -19,6 +23,7 @@ const SignupStudent = () => {
         password: values.password,
         lessons: [],
       };
+      let id;
       fetch(`http://localhost:5000/api/students/signup`, {
         method: "POST",
         headers: {
@@ -28,8 +33,10 @@ const SignupStudent = () => {
           ...valuestosend,
         }),
       })
-      .then((res) => res.json()).then((data) => console.log(data))
+      .then((res) => res.json()).then((data) => (console.log(data))).then((data) => (id = data._id))
       //alert(JSON.stringify(values, null, 2));
+      setUser(["Student", id])
+      console.log(id + "id");
     },
   });
   return (
