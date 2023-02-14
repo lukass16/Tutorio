@@ -3,9 +3,8 @@ import React, { useState, useContext, useEffect } from "react";
 import Container from "@mui/material/Container";
 import LessonCard from "./components/LessonCard";
 import { Stack } from "@mui/system";
-import Card from '@mui/material/Card';
+import Card from "@mui/material/Card";
 import Schedule from "./Schedule";
-
 
 import UserContext from "../util/UserContext";
 
@@ -72,7 +71,7 @@ const Lesson = (props) => {
   const [mode, setMode] = useState("little");
   return (
     <Container align="center">
-    <button onClick={() => setMode(["all"])}>See all</button>
+      <button onClick={() => setMode(["all"])}>See all</button>
       {lessonsList && (
         <Stack spacing={1}>
           {lessonsList.map((lesson) => {
@@ -84,18 +83,18 @@ const Lesson = (props) => {
                 teacher={lesson.teacher}
                 start={lesson.start}
                 end={lesson.end}
+                status={lesson.status}
               />
             );
           })}
         </Stack>
-       
       )}
       <div>
-      {mode[0] === "little" && <Lesson/>}
-      {mode[0] === "all" && <Schedule />}
+        {mode[0] === "little" && <Lesson />}
+        {mode[0] === "all" && <Schedule />}
       </div>
     </Container>
   );
-}
+};
 
 export default Lesson;

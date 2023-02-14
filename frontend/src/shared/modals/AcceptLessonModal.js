@@ -16,14 +16,18 @@ const modalStyle = {
   p: 4,
 };
 
-const EditLessonModal = (props) => {
+const AcceptLessonModal = (props) => {
   const handleCloseAcceptModal = () => {
     props.setOpenAcceptModal(false);
   };
 
   const handleAccept = () => {
-    const calendarApi = props.cal.current.getApi();
-    const currentEvent = calendarApi.getEventById(props.selectedEventId);
+    // checking if component is given calendar to edit
+    let currentEvent;
+    if (props.cal) {
+      const calendarApi = props.cal.current.getApi();
+      currentEvent = calendarApi.getEventById(props.selectedEventId);
+    }
 
     const updatedLesson = {
       status: "ACCEPTED",
@@ -49,9 +53,15 @@ const EditLessonModal = (props) => {
           return;
         }
 
-        // change what needs to be changed on the client side
-        currentEvent.setProp("backgroundColor", "#98FB98");
-        currentEvent.setExtendedProp("status", "ACCEPTED");
+        if (props.cal) {
+          // change what needs to be changed on the client side
+          currentEvent.setProp("backgroundColor", "#98FB98");
+          currentEvent.setExtendedProp("status", "ACCEPTED");
+        }
+        if(props.handleChangeCardStatus)
+        {
+          props.handleChangeCardStatus("ACCEPTED");
+        }
 
         // testing
         console.log("Accepted lesson:" + props.selectedEventId);
@@ -65,12 +75,15 @@ const EditLessonModal = (props) => {
   };
 
   const handleDecline = () => {
-    const calendarApi = props.cal.current.getApi();
-    const currentEvent = calendarApi.getEventById(props.selectedEventId);
+    let currentEvent;
+    if (props.cal) {
+      const calendarApi = props.cal.current.getApi();
+      currentEvent = calendarApi.getEventById(props.selectedEventId);
+    }
 
     const updatedLesson = {
       status: "AVAILABLE",
-      studentId: "declined"
+      studentId: "declined",
     };
 
     let resStatus;
@@ -93,9 +106,15 @@ const EditLessonModal = (props) => {
           return;
         }
 
-        // change what needs to be changed on the client side
-        currentEvent.setProp("backgroundColor", undefined);
-        currentEvent.setExtendedProp("status", "AVAILABLE");
+        if (props.cal) {
+          // change what needs to be changed on the client side
+          currentEvent.setProp("backgroundColor", undefined);
+          currentEvent.setExtendedProp("status", "AVAILABLE");
+        }
+        if(props.handleChangeCardStatus)
+        {
+          props.handleChangeCardStatus("AVAILABLE");
+        }
 
         // testing
         console.log("Declining lesson:" + props.selectedEventId);
@@ -109,8 +128,10 @@ const EditLessonModal = (props) => {
   };
 
   const handleCancel = () => {
-    const calendarApi = props.cal.current.getApi();
-    calendarApi.unselect();
+    if (props.cal) {
+      const calendarApi = props.cal.current.getApi();
+      calendarApi.unselect();
+    }
     props.setOpenAcceptModal(false);
   };
 
@@ -130,4 +151,4 @@ const EditLessonModal = (props) => {
   );
 };
 
-export default EditLessonModal;
+export default AcceptLessonModal;

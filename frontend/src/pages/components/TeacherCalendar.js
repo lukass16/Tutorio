@@ -8,7 +8,7 @@ import { Box } from "@mui/material";
 
 import UserContext from "../../util/UserContext";
 import EditLessonModal from "./EditLessonModal";
-import AcceptLessonModal from "./AcceptLessonModal";
+import AcceptLessonModal from "../../shared/modals/AcceptLessonModal";
 
 const selectedEvent = {};
 let selectedEventId;
