@@ -2,12 +2,10 @@ import React from "react";
 import { useState, useRef, useEffect, useContext } from "react";
 
 import { useParams } from "react-router-dom";
-import { useFormik } from "formik";
 import FullCalendar, { formatDate } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Box, Button, Typography, TextField } from "@mui/material";
-import Modal from "@mui/material/Modal";
+import { Box } from "@mui/material";
 
 import UserContext from "../../util/UserContext";
 import RegisterLessonModal from "./RegisterLessonModal";
@@ -25,13 +23,8 @@ const modalStyle = {
   p: 4,
 };
 
-const selectedEvent = {};
 let selectedEventId;
 let editing = false;
-
-// https://fullcalendar.io/docs/events-json-feed
-// could potentially use multiple event sources that filter out only active lessons etc and apply custom options to them
-// todo: add custom color rendering
 
 const ViewCalendar = () => {
   const { teacherId } = useParams();
@@ -107,7 +100,6 @@ const ViewCalendar = () => {
     console.log("Clicked on: " + selectedEventId);
 
     if (selected.event.extendedProps.hasRegistered == "true") {
-      // if so, set editing mode
       editing = true;
       console.log("This student has registered for this lesson");
     }
