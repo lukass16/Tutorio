@@ -10,6 +10,7 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
 import UserContext from "../../util/UserContext";
+import RegisterLessonModal from "./RegisterLessonModal";
 
 const modalStyle = {
   position: "absolute",
@@ -37,9 +38,11 @@ const ViewCalendar = () => {
 
   const cal = useRef(); // to access the calendar you must use a reference
   const [currentEvents, setCurrentEvents] = useState([]);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
   const { user } = useContext(UserContext);
+
+  const setEditing = (value) => (editing = value);
 
   useEffect(() => {
     console.log(teacherId);
@@ -78,13 +81,17 @@ const ViewCalendar = () => {
           newEvent.extendedProps.hasRegistered = "false";
 
           // checking if lesson is not available
-          if (lesson.status != "AVAILABLE") {
+          if (lesson.status == "REQUESTED") {
             if (lesson.studentId == user[1]) {
               console.log("Rendering lesson that is registered for this user");
               newEvent.backgroundColor = "#A020F0";
               newEvent.extendedProps.hasRegistered = "true"; // indicating that this student has registered for this lesson
               calendarApi.addEvent(newEvent);
             }
+          } else if (lesson.status == "ACCEPTED") {
+            newEvent.backgroundColor = "#98FB98";
+            newEvent.extendedProps.hasRegistered = "true";
+            calendarApi.addEvent(newEvent);
           } else {
             calendarApi.addEvent(newEvent);
           }
@@ -95,206 +102,30 @@ const ViewCalendar = () => {
       });
   }, []);
 
-  // using the Formik hook
-  const formik = useFormik({
-    initialValues: {
-      comment_from_st: "",
-    },
-    onSubmit: (values) => {
-      const calendarApi = cal.current.getApi();
-      const currentEvent = calendarApi.getEventById(selectedEventId);
-      const updatedLesson = {
-        comment_from_st: values.comment_from_st,
-      };
-
-      if (editing) {
-        let resStatus;
-
-        updatedLesson.status = "REQUESTED"; // Don't update status
-        // sending changes to database
-        fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...updatedLesson,
-          }),
-        })
-          .then((res) => {
-            resStatus = res.status;
-            return res.json();
-          })
-          .then((data) => {
-            // if response failed
-            if (resStatus === 500) {
-              throw new Error(data.message);
-              return;
-            }
-            console.log("Updated lesson");
-            console.log(data.lesson);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-        setOpenEditModal(false);
-      } else {
-        let resStatus;
-        // setting lesson status as requested
-        updatedLesson.status = "REQUESTED";
-        updatedLesson.studentId = user[1];
-
-        // sending changes to database
-        fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...updatedLesson,
-          }),
-        })
-          .then((res) => {
-            resStatus = res.status;
-            return res.json();
-          })
-          .then((data) => {
-            // if response failed
-            if (resStatus === 500) {
-              throw new Error(data.message);
-              return;
-            }
-            console.log("Registered lesson");
-            console.log(data.lesson);
-
-            // add any necessary changes to the client side
-            currentEvent.setProp("backgroundColor", "#A020F0");
-            currentEvent.setExtendedProp("hasRegistered", "true");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-        setOpenEditModal(false);
-      }
-    },
-  });
-
-  const handleClose = () => {
-    const calendarApi = cal.current.getApi();
-    editing = false;
-    setOpenEditModal(false);
-    calendarApi.unselect();
-  };
-
-  const handleCancel = (e) => {
-    const calendarApi = cal.current.getApi();
-    calendarApi.unselect();
-    editing = false;
-    e.preventDefault();
-    setOpenEditModal(false);
-    
-  };
-
-  const handleUnregister = () => {
-    const calendarApi = cal.current.getApi();
-    const currentEvent = calendarApi.getEventById(selectedEventId);
-    const updatedLesson = {};
-
-    updatedLesson.comment_from_st = "";
-    updatedLesson.status = "AVAILABLE";
-    updatedLesson.studentId = "removed"; // if studentId is "removed", this indicates the controler to perform a removing action
-
-    let resStatus;
-    // sending changes to database
-    fetch(`http://localhost:5000/api/lessons/${selectedEventId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...updatedLesson,
-      }),
-    })
-      .then((res) => {
-        resStatus = res.status;
-        return res.json();
-      })
-      .then((data) => {
-        // if response failed
-        if (resStatus === 500) {
-          throw new Error(data.message);
-          return;
-        }
-        console.log("Unregistered lesson");
-        console.log(data.lesson);
-
-        // add any necessary changes to the client side
-        currentEvent.setProp("backgroundColor", undefined);
-        currentEvent.setExtendedProp("hasRegistered", "false");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    editing = false;
-    setOpenEditModal(false);
-  };
-
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
     console.log("Clicked on: " + selectedEventId);
-    
 
-    console.log("Has registered property: " + String(selected.event.extendedProps.hasRegistered));
-    // check if the student has already registered for this lesson
     if (selected.event.extendedProps.hasRegistered == "true") {
       // if so, set editing mode
       editing = true;
       console.log("This student has registered for this lesson");
     }
 
-    setOpenEditModal(true);
+    setOpenRegisterModal(true);
   };
 
   return (
     <Box m="20px">
-      <Modal
-        open={openEditModal}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={modalStyle}
-          component="form"
-          onSubmit={formik.handleSubmit}
-          noValidate
-          autoComplete="off"
-        >
-          <Typography variant="h6">Confirm Lesson</Typography>
-          <div>
-            <TextField
-              required
-              id="comment_from_st"
-              name="comment_from_st"
-              label="Comments for lesson"
-              variant="filled"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.subject}
-            />
-          </div>
-          <Button type="submit">{editing ? "Update" : "Register"}</Button>
-          <Button onClick={handleCancel}>Cancel</Button>
-          {editing && (
-            <Button onClick={handleUnregister} variant="danger">
-              Unregister
-            </Button>
-          )}
-        </Box>
-      </Modal>
+      <RegisterLessonModal
+        open={openRegisterModal}
+        setOpenRegisterModal={setOpenRegisterModal}
+        selectedEventId={selectedEventId}
+        editing={editing}
+        setEditing={setEditing}
+        cal={cal}
+        user={user}
+      />
       <Box display="flex" justifyContent="space-between">
         {/* CALENDAR */}
         <Box flex="1 1 100%" ml="15px">
