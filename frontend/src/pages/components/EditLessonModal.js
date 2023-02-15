@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -22,15 +22,11 @@ const modalStyle = {
 };
 
 const EditLessonModal = (props) => {
-  const initStart = dayjs(props.selectedEvent.start.valueOf());
-  const initEnd = dayjs(props.selectedEvent.end.valueOf());
-  const [start, setStart] = useState(initStart);
-  const [end, setEnd] = useState(initEnd);
+  const [start, setStart] = useState(props.selectedEvent.start.valueOf());
+  const [end, setEnd] = useState(props.selectedEvent.end.valueOf());
 
-
-  console.log("EditLessonModal props: ", props);
-  console.log("Initial start: ", initStart);
-  console.log("start: ", start);
+  console.log("Props: ", props);
+  console.log("start: ", new Date(start));
 
   const handleCloseEditModal = () => {
     props.setEditing(false);
@@ -89,9 +85,11 @@ const EditLessonModal = (props) => {
       subject: "",
       place: "",
       price: "",
-      start: props.selectedEvent.start,
     },
     onSubmit: (values) => {
+      const newStart = new Date(start);
+      const newEnd = new Date(end);
+
       if (props.editing) {
         const calendarApi = props.cal.current.getApi();
         const currentEvent = calendarApi.getEventById(props.selectedEventId);
@@ -99,8 +97,8 @@ const EditLessonModal = (props) => {
         const updatedLesson = {
           subject: values.subject,
           price: values.price,
-          start: start,
-          end: end,
+          start: newStart,
+          end: newEnd,
           place: values.place,
           teacherId: props.user[1],
         };
@@ -128,6 +126,10 @@ const EditLessonModal = (props) => {
 
             // change what needs to be changed on the client side
             currentEvent.setProp("title", values.subject);
+            currentEvent.setStart(newStart);
+            currentEvent.setEnd(newEnd);
+
+            console.log("New Start: ", newStart);
 
             // testing
             console.log("Successfully updated lesson/event");
@@ -147,8 +149,8 @@ const EditLessonModal = (props) => {
         const newLesson = {
           subject: values.subject,
           price: values.price,
-          start: props.selectedEvent.start,
-          end: props.selectedEvent.end,
+          start: newStart,
+          end: newEnd,
           place: values.place,
           teacherId: props.user[1],
         };
@@ -180,8 +182,8 @@ const EditLessonModal = (props) => {
             const newEvent = {
               id: _id,
               title: values.subject,
-              start: props.selectedEvent.start,
-              end: props.selectedEvent.end,
+              start: newStart,
+              end: props.newEnd,
               allDay: props.selectedEvent.allDay,
             };
 
@@ -249,7 +251,7 @@ const EditLessonModal = (props) => {
               value={formik.values.price}
             />
           </Box>
-          <Box sx={{my:2}}>
+          <Box sx={{ my: 2 }}>
             <DateTimePicker
               renderInput={(props) => <TextField {...props} />}
               label="Start"

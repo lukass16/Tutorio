@@ -117,7 +117,7 @@ const TeacherCalendar = () => {
 
   return (
     <Box m="20px">
-      <EditLessonModal
+      {openEditModal && (<EditLessonModal
         open={openEditModal}
         editing={editing}
         setEditing={setEditing}
@@ -126,7 +126,8 @@ const TeacherCalendar = () => {
         selectedEvent={selectedEvent}
         user={user}
         cal={cal}
-      />
+      />)}
+      
       <AcceptLessonModal
         open={openAcceptModal}
         setOpenAcceptModal={setOpenAcceptModal}
