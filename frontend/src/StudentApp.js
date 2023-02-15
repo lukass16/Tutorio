@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import SignupSt from "./pages/SignupStudent";
 import ViewCalendar from "./pages/components/ViewCalendar";
+import LoginStudent from "./pages/LoginStudent";
 
 const StudentApp = () => {
     return (
@@ -24,6 +25,7 @@ const StudentApp = () => {
           <Route path="/schedule/:teacherId" element={<ViewCalendar />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<LoginStudent />} />
           <Route path="/signup-student" element={<SignupSt />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

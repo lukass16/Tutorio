@@ -4,7 +4,6 @@ const Student = require("../models/student");
 
 const bcrypt = require("bcryptjs");
 
-
 exports.getStudents = (req, res, next) => {
   Student.find()
     .then((students) => {
@@ -32,27 +31,19 @@ exports.getStudent = (req, res, next) => {
 };
 
 exports.signup = (req, res, next) => {
-  const {
-    id,
-    name,
-    surname,
-    email,
-    phone,
-    password,
-    lessons,
-  } = req.body;
+  const { id, name, surname, email, phone, password, lessons } = req.body;
 
-  let hashedPassword;
-  
-  //bcrypt.hashSync(password, 12).then((hashedPw) => {
-  //  hashedPassword = hashedPw;
-  //})
-  //.catch((err) => {
-  //  console.log(err);
-  //  const error = new Error(err);
-  //  return next(error);
-  //});
-
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPw) => {
+      hashedPassword = hashedPw;
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log("Error in hashing password");
+      const error = new Error(err);
+      return next(error);
+    });
 
   const newStudent = Student({
     id: id,
@@ -60,14 +51,14 @@ exports.signup = (req, res, next) => {
     surname: surname,
     email: email,
     phone: phone,
-    password: password,
+    password: hashedPassword,
     lessons: lessons,
   });
 
   newStudent
     .save()
     .then((newStudent) => {
-      res.status(200).json({ student : newStudent });
+      res.status(200).json({ student: newStudent });
     })
     .catch((err) => {
       console.log(err);
@@ -79,14 +70,7 @@ exports.signup = (req, res, next) => {
 exports.updateStudent = (req, res, next) => {
   const studentId = req.params.studentId;
 
-  const {
-    name,
-    surname,
-    email,
-    phone,
-    password,
-    lessons,
-  } = req.body;
+  const { name, surname, email, phone, password, lessons } = req.body;
 
   Student.findById(studentId)
     .then((student) => {
@@ -128,6 +112,18 @@ exports.deleteStudent = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  const studentId = req.params.studentId;
-  
-}
+  let existingStudent;
+  const { email } = req.body;
+  console.log(email);
+  console.log(req.body);
+  /*Student.findOne({ email: email }).then((student) => {
+    if (!student) {
+      const error = new Error("A student with this email could not be found!");
+      error.statusCode = 401;
+      throw error;
+    }
+    existingStudent = student;
+    return bcrypt.compare(req.body.password, student.password);
+  })
+  .then(alert("You are logged in!"));*/
+};

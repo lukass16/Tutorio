@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import SignupSt from "./pages/SignupStudent";
+import LoginStudent from "./pages/LoginStudent";
 
 const TeacherApp = () => {
     return (
@@ -22,7 +23,8 @@ const TeacherApp = () => {
           <Route path="/lessons" element={<Lessons />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/signup" element={<Signup />} /> 
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<LoginStudent />} />
           <Route path="/signup-student" element={<SignupSt />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

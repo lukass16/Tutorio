@@ -8,11 +8,11 @@ const SignupStudent = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      surname: '',
-      email: '',
-      phone: '',
-      password: '',
+      name: "",
+      surname: "",
+      email: "",
+      phone: "",
+      password: "",
     },
     onSubmit: (values) => {
       const valuestosend = {
@@ -33,12 +33,13 @@ const SignupStudent = () => {
           ...valuestosend,
         }),
       })
-      .then((res) => res.json()).then((data) => (console.log(data))).then((data) => (id = data._id))
+        .then((res) => res.json())
+        .then((data) => console.log(data));
       //alert(JSON.stringify(values, null, 2));
-      setUser(["Student", id])
-      console.log(id + "id");
+      setUser(["Student", id]);
     },
   });
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="name">First Name</label>
