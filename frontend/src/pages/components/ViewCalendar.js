@@ -85,6 +85,12 @@ const ViewCalendar = () => {
             newEvent.backgroundColor = "#98FB98";
             newEvent.extendedProps.hasRegistered = "true";
             calendarApi.addEvent(newEvent);
+          } else if (lesson.status == "PENDING") {
+            newEvent.backgroundColor = "#A9A9A9";
+            calendarApi.addEvent(newEvent);
+          } else if (lesson.status == "FINISHED") {
+            newEvent.backgroundColor = "#696969";
+            calendarApi.addEvent(newEvent);
           } else {
             calendarApi.addEvent(newEvent);
           }

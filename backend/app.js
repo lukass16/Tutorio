@@ -6,6 +6,8 @@ const teachersRoutes = require("./routes/teachers");
 const studentsRoutes = require("./routes/students");
 const lessonsRoutes = require("./routes/lessons");
 
+const updateLessonJob = require("./scheduled/updateLessonStatus");
+
 const app = express();
 
 // parsing incoming JSON body data
@@ -37,6 +39,7 @@ mongoose
     `mongodb://dataquery:4Y7hjTQD3@95.217.14.19/data?authMechanism=DEFAULT&authSource=data`
   )
   .then(() => {
+    updateLessonJob.start(); // starting the cron job
     app.listen(5000);
   })
   .catch((err) => {

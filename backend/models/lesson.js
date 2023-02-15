@@ -9,7 +9,7 @@ const lessonSchema = new Schema({
   start: { type: Date, required: true },
   end: { type: Date, required: true },
   place: { type: String, required: true },
-  status: {type: String, required: true }, // AVAILABLE, REQUESTED, ACCEPTED, PENDING FINISHED, FINISHED
+  status: {type: String, required: true }, // AVAILABLE, REQUESTED, ACCEPTED, PENDING, FINISHED
   studentId: { type: mongoose.Types.ObjectId, ref: 'Student' },
   teacherId: { type: mongoose.Types.ObjectId, required: true, ref: 'Teacher' }
 });

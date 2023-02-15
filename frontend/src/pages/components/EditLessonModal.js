@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
+import dayjs from 'dayjs';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import { Box, Button, Typography, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import Modal from "@mui/material/Modal";
@@ -18,6 +22,15 @@ const modalStyle = {
 };
 
 const EditLessonModal = (props) => {
+  const initStart = dayjs(props.selectedEvent.start.valueOf());
+  const initEnd = dayjs(props.selectedEvent.end.valueOf());
+  const [start, setStart] = useState(initStart);
+  const [end, setEnd] = useState(initEnd);
+
+
+  console.log("EditLessonModal props: ", props);
+  console.log("Initial start: ", initStart);
+  console.log("start: ", start);
 
   const handleCloseEditModal = () => {
     props.setEditing(false);
@@ -76,6 +89,7 @@ const EditLessonModal = (props) => {
       subject: "",
       place: "",
       price: "",
+      start: props.selectedEvent.start,
     },
     onSubmit: (values) => {
       if (props.editing) {
@@ -85,8 +99,8 @@ const EditLessonModal = (props) => {
         const updatedLesson = {
           subject: values.subject,
           price: values.price,
-          start: currentEvent.start,
-          end: currentEvent.end,
+          start: start,
+          end: end,
           place: values.place,
           teacherId: props.user[1],
         };
@@ -127,7 +141,6 @@ const EditLessonModal = (props) => {
         props.setEditing(false);
 
         props.setOpenEditModal(false);
-
       } else {
         const calendarApi = props.cal.current.getApi();
 
@@ -189,61 +202,81 @@ const EditLessonModal = (props) => {
   });
 
   return (
-    <Modal
-      open={props.open ?? false}
-      onClose={handleCloseEditModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box
-        sx={modalStyle}
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        autoComplete="off"
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Modal
+        open={props.open ?? false}
+        onClose={handleCloseEditModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <Typography variant="h6">Confirm Lesson</Typography>
-        <div>
-          <TextField
-            required
-            id="subject"
-            name="subject"
-            label="Subject"
-            variant="filled"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.subject}
-          />
-          <TextField
-            required
-            id="place"
-            name="place"
-            label="Place"
-            variant="filled"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.place}
-          />
-          <TextField
-            required
-            id="price"
-            name="price"
-            label="Price"
-            variant="filled"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.price}
-          />
-        </div>
-        <Button type="submit">{props.editing ? "Update" : "Submit"}</Button>
-        <Button onClick={handleCancel}>Cancel</Button>
-        {props.editing && (
-          <Button onClick={handleDelete} variant="danger">
-            Delete
-          </Button>
-        )}
-      </Box>
-    </Modal>
+        <Box
+          sx={modalStyle}
+          component="form"
+          onSubmit={formik.handleSubmit}
+          noValidate
+          autoComplete="off"
+        >
+          <Typography variant="h6">Confirm Lesson</Typography>
+          <Box>
+            <TextField
+              required
+              id="subject"
+              name="subject"
+              label="Subject"
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.subject}
+            />
+            <TextField
+              required
+              id="place"
+              name="place"
+              label="Place"
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.place}
+            />
+            <TextField
+              required
+              id="price"
+              name="price"
+              label="Price"
+              variant="filled"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.price}
+            />
+          </Box>
+          <Box sx={{my:2}}>
+            <DateTimePicker
+              renderInput={(props) => <TextField {...props} />}
+              label="Start"
+              value={start}
+              onChange={(newStart) => {
+                setStart(newStart);
+              }}
+            />
+            <DateTimePicker
+              renderInput={(props) => <TextField {...props} />}
+              label="End"
+              value={end}
+              onChange={(newEnd) => {
+                setEnd(newEnd);
+              }}
+            />
+          </Box>
+          <Button type="submit">{props.editing ? "Update" : "Submit"}</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
+          {props.editing && (
+            <Button onClick={handleDelete} variant="danger">
+              Delete
+            </Button>
+          )}
+        </Box>
+      </Modal>
+    </LocalizationProvider>
   );
 };
 

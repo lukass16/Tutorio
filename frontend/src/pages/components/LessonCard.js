@@ -8,26 +8,36 @@ import AcceptLessonModal from "../../shared/modals/AcceptLessonModal";
 
 const LessonCard = (props) => {
   let initialBackGroundColor = "#ffffff";
-  if (props.status == "ACCEPTED") {
-    initialBackGroundColor = "#98FB98";
-  } else if (props.status == "REQUESTED") {
+  if (props.status == "REQUESTED") {
     initialBackGroundColor = "#A020F0";
+  } else if (props.status == "ACCEPTED") {
+    initialBackGroundColor = "#98FB98";
+  } else if (props.status == "PENDING") {
+    initialBackGroundColor = "#A9A9A9";
+  } else if (props.status == "FINISHED") {
+    initialBackGroundColor = "#696969";
   }
 
   const [openAcceptModal, setOpenAcceptModal] = useState(false);
   const [status, setStatus] = useState(props.status);
-  const [backGroundColor, setBackGroundColor] = useState(initialBackGroundColor);
+  const [backGroundColor, setBackGroundColor] = useState(
+    initialBackGroundColor
+  );
 
   const handleChangeCardStatus = (status) => {
     setStatus(status);
-    if (status == "ACCEPTED") {
+    if (status == "FINISHED") {
+      setBackGroundColor("#696969");
+    } else if (status == "PENDING") {
+      setBackGroundColor("#A9A9A9");
+    } else if (status == "ACCEPTED") {
       setBackGroundColor("#98FB98");
     } else if (status == "REQUESTED") {
       setBackGroundColor("#A020F0");
     } else {
       setBackGroundColor("#ffffff");
     }
-  }
+  };
 
   //! testing
   let startDate = new Date(props.start);
@@ -43,7 +53,7 @@ const LessonCard = (props) => {
         open={openAcceptModal}
         setOpenAcceptModal={setOpenAcceptModal}
         selectedEventId={props.id}
-        handleChangeCardStatus = {handleChangeCardStatus}
+        handleChangeCardStatus={handleChangeCardStatus}
       />
       <Card
         key={props.id}
@@ -123,8 +133,9 @@ const LessonCard = (props) => {
             flexDirection: "column",
           }}
         >
-          {status != "AVAILABLE" && <Button onClick={handleRespondClick}>Respond</Button>}
-          
+          {status != "AVAILABLE" && (
+            <Button onClick={handleRespondClick}>Respond</Button>
+          )}
         </Box>
       </Card>
     </>
