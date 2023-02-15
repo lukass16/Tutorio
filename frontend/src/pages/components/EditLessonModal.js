@@ -25,8 +25,6 @@ const EditLessonModal = (props) => {
   const [start, setStart] = useState(props.selectedEvent.start.valueOf());
   const [end, setEnd] = useState(props.selectedEvent.end.valueOf());
 
-  console.log("Props: ", props);
-  console.log("start: ", new Date(start));
 
   const handleCloseEditModal = () => {
     props.setEditing(false);
@@ -183,7 +181,7 @@ const EditLessonModal = (props) => {
               id: _id,
               title: values.subject,
               start: newStart,
-              end: props.newEnd,
+              end: newEnd,
               allDay: props.selectedEvent.allDay,
             };
 
