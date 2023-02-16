@@ -14,7 +14,9 @@ const MainNavigation = (props) => {
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{display: "flex", justifyContent: "space-between"}}>
           <Box>
-            <Link to="/">Tutorio</Link>
+            <Link to="/">
+              Tutorio
+            </Link>
           </Box>
           <Box>
             <NavLinks />

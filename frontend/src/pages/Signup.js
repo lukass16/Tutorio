@@ -1,16 +1,20 @@
 import React from "react";
 import { useFormik } from "formik";
+import { Box } from "@mui/system";
+import ImageUpload from "../shared/formElements/ImageUpload";
 
 const Signup = () => {
   const formik = useFormik({
     initialValues: {
-      name: '',
-      surname: '',
-      email: '',
-      phone: '',
-      password: '',
+      name: "",
+      surname: "",
+      email: "",
+      phone: "",
+      password: "",
     },
     onSubmit: (values) => {
+
+
       const valuestosend = {
         name: values.name,
         surname: values.surname,
@@ -30,57 +34,71 @@ const Signup = () => {
           ...valuestosend,
         }),
       })
-      .then((res) => res.json()).then((data) => console.log(data))
+        .then((res) => res.json())
+        .then((data) => console.log(data));
       //alert(JSON.stringify(values, null, 2));
     },
   });
+
+
+  const onImageInput = (id, file, isValid) => {
+    console.log(id, file, isValid);
+  }
+  
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <label htmlFor="name">First Name</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        onChange={formik.handleChange}
-        value={formik.values.name}
-      />
+    <>
+    <Box>
+      <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="name">First Name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          onChange={formik.handleChange}
+          value={formik.values.name}
+        />
 
-      <label htmlFor="surname">Last Name</label>
-      <input
-        id="surname"
-        name="surname"
-        type="text"
-        onChange={formik.handleChange}
-        value={formik.values.surname}
-      />
+        <label htmlFor="surname">Last Name</label>
+        <input
+          id="surname"
+          name="surname"
+          type="text"
+          onChange={formik.handleChange}
+          value={formik.values.surname}
+        />
 
-      <label htmlFor="email">Email Address</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        onChange={formik.handleChange}
-        value={formik.values.email}
-      />
-      <label htmlFor="phone">Phone</label>
-      <input
-        id="phone"
-        name="phone"
-        type="text"
-        onChange={formik.handleChange}
-        value={formik.values.phone}
-      />
-      <label htmlFor="password">Password</label>
-      <input
-        id="password"
-        name="password"
-        type="text"
-        onChange={formik.handleChange}
-        value={formik.values.password}
-      />
+        <label htmlFor="email">Email Address</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          onChange={formik.handleChange}
+          value={formik.values.email}
+        />
+        <label htmlFor="phone">Phone</label>
+        <input
+          id="phone"
+          name="phone"
+          type="text"
+          onChange={formik.handleChange}
+          value={formik.values.phone}
+        />
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="text"
+          onChange={formik.handleChange}
+          value={formik.values.password}
+        />
 
-      <button type="submit">Submit</button>
-    </form>
+        <button type="submit">Submit</button>
+      </form>
+    </Box>
+    <Box>
+      <ImageUpload id="avatarImage" onInput = {onImageInput}/>
+    </Box>
+    </>
   );
 };
 
