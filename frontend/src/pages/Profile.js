@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -9,7 +9,11 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 
+
 import UserContext from "../util/UserContext";
+
+window.$name = "";
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,8 +48,7 @@ function a11yProps(index) {
   };
 }
 
-var Name = "Jessica";
-var Surname = "White";
+
 
 const Basic = () => {
   const bull = (
@@ -60,33 +63,97 @@ const Basic = () => {
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
         <Typography sx={{ fontSize: 20 }} color="text.secondary" gutterBottom>
-          Logged in as: {Name} {Surname}
+          Logged in as: 
         </Typography>
       </CardContent>
     </Card>
   );
 };
 
+
+
 const MyInfo = () => {
-  const Edit = () => {
+  const [name, setName] = useState ("");
+  const EditInfoo = () => {
+
+    const [state, setState] = React.useState({
+      fullName: "",
+      surname: "",
+      password: "",
+      editor: "",
+      message: "",
+      terms: false,
+      test: ""
+    });
+  
+    const handleChange = (event) => {
+      const target = event.target;
+      const value = target.type === "checkbox" ? target.checked : target.value;
+      const name = target.name;
+  
+      setState((state) => ({
+        ...state,
+        [name]: value
+      }));
+    };
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(state);
+    };
+
     
+
+
+    const handleClick = () => {
+    setName(state.fullName);
+  };
+
     return (
-      <Card>
-        <form>
-          <label>
-            Name:
-            <input type="text" name="name" id="Name" />
-          </label>
-          <label>
-            Surname:
-            <input type="text" name="surname" />
-          </label>
-          <button type="submit" value="Submit">Submit</button>
-        </form>
-      </Card>
+      <div className="App">
+        <header>
+          <div className="container">
+          </div>
+        </header>
+        <div className="container">
+          <div className="columns">
+            <div className="column is-9">
+              <form className="form" onSubmit={handleSubmit}>
+                <div className="field">
+                  <label className="label">Name</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name="fullName"
+                      value={state.fullName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+  
+
+                  
+                <div className="field">
+                  <div className="control">
+                    <button 
+                      type="submit"
+                      value="Submit"
+                      className="button is-primary"
+                      onClick={handleClick}
+                    >submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
     );
   };
   const [mode, setMode] = useState("look");
+
   const bull = (
     <Box
       component="span"
@@ -103,11 +170,9 @@ const MyInfo = () => {
             My Info
           </Typography>
           <Typography variant="h5" component="div">
-            Name: {Name}
+            Name: {name}
           </Typography>
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Surname: {Surname}
-          </Typography>
+
           <Typography variant="body2">
             Role:
             <br />
@@ -122,7 +187,7 @@ const MyInfo = () => {
       </Card>
       <div>
         {mode[0] === "looking" && <MyInfo />}
-        {mode[0] === "editing" && <Edit />}
+        {mode[0] === "editing" && <EditInfoo />}
       </div>
     </div>
   );
