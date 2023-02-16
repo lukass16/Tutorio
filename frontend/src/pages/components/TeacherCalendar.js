@@ -10,12 +10,13 @@ import UserContext from "../../util/UserContext";
 import EditLessonModal from "./EditLessonModal";
 import AcceptLessonModal from "../../shared/modals/AcceptLessonModal";
 
-const selectedEvent = {};
+let selectedEvent = {};
 let selectedEventId;
 let editing;
 
 const TeacherCalendar = () => {
   const cal = useRef(); // to access the calendar you must use a reference
+
   const [currentEvents, setCurrentEvents] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openAcceptModal, setOpenAcceptModal] = useState(false);
@@ -70,6 +71,14 @@ const TeacherCalendar = () => {
             console.log("Rendering lesson that has been accepted");
             newEvent.backgroundColor = "#98FB98";
             calendarApi.addEvent(newEvent);
+          } else if (lesson.status == "PENDING") {
+            console.log("Rendering lesson that's pending");
+            newEvent.backgroundColor = "#A9A9A9";
+            calendarApi.addEvent(newEvent);
+          } else if (lesson.status == "FINISHED") {
+            console.log("Rendering lesson that's finished");
+            newEvent.backgroundColor = "#696969";
+            calendarApi.addEvent(newEvent);
           }
         });
       })
@@ -89,6 +98,10 @@ const TeacherCalendar = () => {
 
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
+    selectedEvent.start = selected.event.start;
+    selectedEvent.end = selected.event.end;
+
+    console.log(selected.event.extendedProps.status);
 
     if (selected.event.extendedProps.status === "REQUESTED") {
       setOpenAcceptModal(true);
@@ -104,7 +117,7 @@ const TeacherCalendar = () => {
 
   return (
     <Box m="20px">
-      <EditLessonModal
+      {openEditModal && (<EditLessonModal
         open={openEditModal}
         editing={editing}
         setEditing={setEditing}
@@ -113,7 +126,8 @@ const TeacherCalendar = () => {
         selectedEvent={selectedEvent}
         user={user}
         cal={cal}
-      />
+      />)}
+      
       <AcceptLessonModal
         open={openAcceptModal}
         setOpenAcceptModal={setOpenAcceptModal}

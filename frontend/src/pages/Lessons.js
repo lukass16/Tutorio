@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect } from "react";
 import Container from "@mui/material/Container";
 import LessonCard from "./components/LessonCard";
 import { Stack } from "@mui/system";
-import Card from "@mui/material/Card";
 import Schedule from "./Schedule";
 
 import UserContext from "../util/UserContext";
