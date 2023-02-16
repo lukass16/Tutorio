@@ -32,10 +32,12 @@ const cardStyle = {
 
 const TeacherCard = (props) => {
   const { teacher } = props;
-  if(teacher.image)
+  let image = teacher.image;
+  if(image)
   {
-    console.log(teacher.image);
+    image = "http://localhost:5000/public/images/" + image;
   }
+
   return (
     <Card key={teacher._id} sx={cardStyle}>
       <CardContent>
@@ -43,7 +45,7 @@ const TeacherCard = (props) => {
           <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
             <Avatar
               align="center"
-              src = {teacher.image ?? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"}
+              src = {image ?? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"}
               sx={{ width: 70, height: 70, justifyContent: "center" }}
             >
               {teacher.name + " " + teacher.surname}
