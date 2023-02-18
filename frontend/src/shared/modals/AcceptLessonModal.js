@@ -3,6 +3,8 @@ import React from "react";
 import { Box, Button, Typography, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
+import { colors } from "../../util/theme";
+
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -55,7 +57,7 @@ const AcceptLessonModal = (props) => {
 
         if (props.cal) {
           // change what needs to be changed on the client side
-          currentEvent.setProp("backgroundColor", "#98FB98");
+          currentEvent.setProp("backgroundColor", colors["ACCEPTED"]);
           currentEvent.setExtendedProp("status", "ACCEPTED");
         }
         if(props.handleChangeCardStatus)
@@ -108,7 +110,7 @@ const AcceptLessonModal = (props) => {
 
         if (props.cal) {
           // change what needs to be changed on the client side
-          currentEvent.setProp("backgroundColor", undefined);
+          currentEvent.setProp("backgroundColor", colors["AVAILABLE"]);
           currentEvent.setExtendedProp("status", "AVAILABLE");
         }
         if(props.handleChangeCardStatus)
