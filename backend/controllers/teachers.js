@@ -30,7 +30,6 @@ exports.getTeacher = (req, res, next) => {
 
 exports.signup = (req, res, next) => {
   const {
-    id,
     name,
     surname,
     email,
@@ -38,19 +37,18 @@ exports.signup = (req, res, next) => {
     description,
     password,
     subjects,
-    lessons,
   } = req.body;
 
   const newTeacher = Teacher({
-    id: id,
     name: name,
     surname: surname,
     email: email,
     phone: phone,
     description: description,
+    image: req.file ? req.file.path : undefined,
     password: password,
-    subjects: subjects,
-    lessons: lessons,
+    subjects: [subjects],
+    lessons: [],
   });
 
   newTeacher
@@ -59,7 +57,7 @@ exports.signup = (req, res, next) => {
       res.status(200).json({ teacher: newTeacher });
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
       const error = new Error(err);
       return next(error);
     });

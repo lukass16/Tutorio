@@ -35,7 +35,8 @@ const TeacherCard = (props) => {
   let image = teacher.image;
   if(image)
   {
-    image = "http://localhost:5000/public/images/" + image;
+    image = "http://localhost:5000/" + image;
+    console.log(image);
   }
 
   return (
