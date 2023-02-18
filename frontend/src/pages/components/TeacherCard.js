@@ -64,8 +64,8 @@ const TeacherCard = (props) => {
         </Box>
       </CardContent>
       <CardActions sx={centeredRow}>
-        <Button>
-          <Link to={`/schedule/${teacher._id}`}>Register For Lesson</Link>
+        <Button variant = "outlined" color="secondary">
+          <Link to={`/schedule/${teacher._id}`} style={{ textDecoration: 'none' }}>Register For Lesson</Link>
         </Button>
       </CardActions>
     </Card>
