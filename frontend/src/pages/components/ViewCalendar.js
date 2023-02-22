@@ -9,6 +9,7 @@ import { Box } from "@mui/material";
 
 import UserContext from "../../util/UserContext";
 import RegisterLessonModal from "./RegisterLessonModal";
+import { colors } from "../../util/theme";
 
 const modalStyle = {
   position: "absolute",
@@ -77,21 +78,22 @@ const ViewCalendar = () => {
           if (lesson.status == "REQUESTED") {
             if (lesson.studentId == user[1]) {
               console.log("Rendering lesson that is registered for this user");
-              newEvent.backgroundColor = "#A020F0";
+              newEvent.backgroundColor = colors["REQUESTED"];
               newEvent.extendedProps.hasRegistered = "true"; // indicating that this student has registered for this lesson
               calendarApi.addEvent(newEvent);
             }
           } else if (lesson.status == "ACCEPTED") {
-            newEvent.backgroundColor = "#98FB98";
+            newEvent.backgroundColor =  colors["ACCEPTED"];
             newEvent.extendedProps.hasRegistered = "true";
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "PENDING") {
-            newEvent.backgroundColor = "#A9A9A9";
+            newEvent.backgroundColor = colors["PENDING"];
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "FINISHED") {
-            newEvent.backgroundColor = "#696969";
+            newEvent.backgroundColor = colors["FINISHED"];
             calendarApi.addEvent(newEvent);
           } else {
+            newEvent.backgroundColor = colors["AVAILABLE"];
             calendarApi.addEvent(newEvent);
           }
         });

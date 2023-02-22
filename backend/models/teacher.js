@@ -8,6 +8,7 @@ const teacherSchema = new Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   description: { type: String, required: false },
+  image: { type: String, required: false },
   password: { type: String, required: true },
   subjects: [{type: String, required: true}],
   lessons: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Lesson' }]

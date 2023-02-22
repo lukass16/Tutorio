@@ -45,11 +45,11 @@ const udpateLessonStatus = async () => {
 };
 
 const updateLessonJob = new cron(
-  "*/1 * * * *",
+  "*/15 * * * *",
   udpateLessonStatus,
   null,
   false,
   "Europe/Riga"
-); // runs every 1 minute
+); // runs every 15 minutes
 
 module.exports = updateLessonJob;

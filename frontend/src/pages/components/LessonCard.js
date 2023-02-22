@@ -5,17 +5,18 @@ import Box from "@mui/material/Box";
 import { Button, Typography } from "@mui/material";
 
 import AcceptLessonModal from "../../shared/modals/AcceptLessonModal";
+import { colors } from "../../util/theme";
 
 const LessonCard = (props) => {
   let initialBackGroundColor = "#ffffff";
   if (props.status == "REQUESTED") {
-    initialBackGroundColor = "#A020F0";
+    initialBackGroundColor = colors["REQUESTED"];
   } else if (props.status == "ACCEPTED") {
-    initialBackGroundColor = "#98FB98";
+    initialBackGroundColor = colors["ACCEPTED"];
   } else if (props.status == "PENDING") {
-    initialBackGroundColor = "#A9A9A9";
+    initialBackGroundColor = colors["PENDING"];
   } else if (props.status == "FINISHED") {
-    initialBackGroundColor = "#696969";
+    initialBackGroundColor = colors["FINISHED"];
   }
 
   const [openAcceptModal, setOpenAcceptModal] = useState(false);
@@ -27,13 +28,13 @@ const LessonCard = (props) => {
   const handleChangeCardStatus = (status) => {
     setStatus(status);
     if (status == "FINISHED") {
-      setBackGroundColor("#696969");
+      setBackGroundColor(colors["FINISHED"]);
     } else if (status == "PENDING") {
-      setBackGroundColor("#A9A9A9");
+      setBackGroundColor(colors["PENDING"]);
     } else if (status == "ACCEPTED") {
-      setBackGroundColor("#98FB98");
+      setBackGroundColor(colors["ACCEPTED"]);
     } else if (status == "REQUESTED") {
-      setBackGroundColor("#A020F0");
+      setBackGroundColor(colors["REQUESTED"]);
     } else {
       setBackGroundColor("#ffffff");
     }

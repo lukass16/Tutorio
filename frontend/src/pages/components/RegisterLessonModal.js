@@ -4,6 +4,8 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import Modal from "@mui/material/Modal";
 
+import { colors } from "../../util/theme";
+
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -92,7 +94,7 @@ const RegisterLessonModal = (props) => {
             console.log(data.lesson);
 
             // add any necessary changes to the client side
-            currentEvent.setProp("backgroundColor", "#A020F0");
+            currentEvent.setProp("backgroundColor", colors["REQUESTED"]);
             currentEvent.setExtendedProp("hasRegistered", "true");
           })
           .catch((err) => {
@@ -153,7 +155,7 @@ const RegisterLessonModal = (props) => {
         console.log(data.lesson);
 
         // add any necessary changes to the client side
-        currentEvent.setProp("backgroundColor", undefined);
+        currentEvent.setProp("backgroundColor", colors["AVAILABLE"]);
         currentEvent.setExtendedProp("hasRegistered", "false");
       })
       .catch((err) => {

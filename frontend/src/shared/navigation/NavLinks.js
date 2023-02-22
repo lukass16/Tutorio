@@ -11,20 +11,24 @@ const NavLinks = (props) => {
 
   return (
     <Stack spacing={2} direction="row">
-      <Button>
-        <NavLink to="/">Find lesson</NavLink>
+      {user[0] === "Student" && (
+        <Button>
+          <NavLink to="/" style={{ textDecoration: 'none' }}>Find lesson</NavLink>
+        </Button>
+      )}
+      {user[0] === "Teacher" && (
+        <Button>
+          <NavLink to="/schedule" style={{ textDecoration: 'none' }}>Schedule</NavLink>
+        </Button>
+      )}
+      <Button >
+        <NavLink to="/lessons" style={{ textDecoration: 'none' }}>Lessons</NavLink>
       </Button>
       <Button>
-        <NavLink to="/schedule">Schedule</NavLink>
+        <NavLink to="/profile" style={{ textDecoration: 'none' }}>Profile</NavLink>
       </Button>
       <Button>
-        <NavLink to="/lessons">Lessons</NavLink>
-      </Button>
-      <Button>
-        <NavLink to="/profile">Profile</NavLink>
-      </Button>
-      <Button>
-        <NavLink to="/signup">Signup</NavLink>
+        <NavLink to="/signup" style={{ textDecoration: 'none' }}>Signup</NavLink>
       </Button>
     </Stack>
   );

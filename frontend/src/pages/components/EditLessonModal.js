@@ -8,6 +8,8 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import Modal from "@mui/material/Modal";
 
+import { colors } from "../../util/theme";
+
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -80,9 +82,9 @@ const EditLessonModal = (props) => {
   // using the Formik hook
   const formik = useFormik({
     initialValues: {
-      subject: "",
-      place: "",
-      price: "",
+      subject: props.editing ? props.selectedEvent.title : "",
+      place: props.editing ? props.selectedEvent.extendedProps.place :"",
+      price: props.editing ? props.selectedEvent.extendedProps.price : "",
     },
     onSubmit: (values) => {
       const newStart = new Date(start);
@@ -183,6 +185,14 @@ const EditLessonModal = (props) => {
               start: newStart,
               end: newEnd,
               allDay: props.selectedEvent.allDay,
+              backgroundColor: colors["AVAILABLE"],
+              extendedProps: {
+                status: "AVAILABLE",
+                place: values.place,
+                price: values.price,
+              }
+              
+
             };
 
             calendarApi.addEvent(newEvent);

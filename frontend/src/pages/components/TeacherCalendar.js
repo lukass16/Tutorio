@@ -9,6 +9,7 @@ import { Box } from "@mui/material";
 import UserContext from "../../util/UserContext";
 import EditLessonModal from "./EditLessonModal";
 import AcceptLessonModal from "../../shared/modals/AcceptLessonModal";
+import { colors } from "../../util/theme";
 
 let selectedEvent = {};
 let selectedEventId;
@@ -59,25 +60,28 @@ const TeacherCalendar = () => {
           newEvent.borderColor = "#ffffff";
           newEvent.extendedProps = {};
           newEvent.extendedProps.status = lesson.status;
+          newEvent.extendedProps.price = lesson.price;
+          newEvent.extendedProps.place = lesson.place;
 
           // checking if lesson is not available
           if (lesson.status == "AVAILABLE") {
+            newEvent.backgroundColor = colors["AVAILABLE"];
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "REQUESTED") {
             console.log("Rendering lesson that has been requested");
-            newEvent.backgroundColor = "#A020F0";
+            newEvent.backgroundColor = colors["REQUESTED"];
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "ACCEPTED") {
             console.log("Rendering lesson that has been accepted");
-            newEvent.backgroundColor = "#98FB98";
+            newEvent.backgroundColor = colors["ACCEPTED"];
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "PENDING") {
             console.log("Rendering lesson that's pending");
-            newEvent.backgroundColor = "#A9A9A9";
+            newEvent.backgroundColor = colors["PENDING"];
             calendarApi.addEvent(newEvent);
           } else if (lesson.status == "FINISHED") {
             console.log("Rendering lesson that's finished");
-            newEvent.backgroundColor = "#696969";
+            newEvent.backgroundColor = colors["FINISHED"];
             calendarApi.addEvent(newEvent);
           }
         });
@@ -89,17 +93,14 @@ const TeacherCalendar = () => {
 
   const handleDateSelect = (selected) => {
     // when an event is selected we retrieve all the selection info and open the modal
-    selectedEvent.start = selected.start;
-    selectedEvent.end = selected.end;
-    selectedEvent.allDay = selected.allDay;
+    selectedEvent = selected;
 
     setOpenEditModal(true);
   };
 
   const handleEventClick = (selected) => {
     selectedEventId = selected.event.id;
-    selectedEvent.start = selected.event.start;
-    selectedEvent.end = selected.event.end;
+    selectedEvent = selected.event;
 
     console.log(selected.event.extendedProps.status);
 
@@ -139,7 +140,7 @@ const TeacherCalendar = () => {
         <Box flex="1 1 100%" ml="15px">
           <FullCalendar
             ref={cal}
-            height="75vh"
+            height="85vh"
             plugins={[timeGridPlugin, interactionPlugin]}
             headerToolbar={{
               left: "prev,next today",
