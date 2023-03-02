@@ -5,5 +5,6 @@ export const colors = {
     PENDING: "#546d70",
     FINISHED: "#2d383a",
     DANGER: "#ff003f",
-    LIGHT: "#f2f3f4"
+    LIGHT: "#f2f3f4",
+    PROFILE: "#f44336"
 };

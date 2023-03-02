@@ -8,17 +8,19 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-
-
 import UserContext from "../util/UserContext";
+import { colors } from "../util/theme";
+
 
 window.$name = "";
+
 
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
+    
     <div
       role="tabpanel"
       hidden={value !== index}
@@ -27,11 +29,13 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 1, width: 1000, bgcolor : colors["AVAILABLE"] }}>
+         
           <Typography>{children}</Typography>
         </Box>
       )}
     </div>
+  
   );
 }
 
@@ -166,14 +170,14 @@ const MyInfo = () => {
     <div>
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          <Typography sx={{ fontSize: 20 }} color = {colors["AVAILABLE"]} gutterBottom>
             My Info
           </Typography>
-          <Typography variant="h5" component="div">
+          <Typography sx={{fontSize: 25}} component="div">
             Name: {name}
           </Typography>
 
-          <Typography variant="body2">
+          <Typography sx={{fontSize: 20}} >
             Role:
             <br />
             {'"Student/Teacher"'}
@@ -194,6 +198,86 @@ const MyInfo = () => {
 };
 
 const MyDescription = () => {
+  const [name, setName] = useState ("");
+   const EditInfoo = () => {
+
+    const [state, setState] = React.useState({
+      fullName: "",
+      surname: "",
+      password: "",
+      editor: "",
+      message: "",
+      terms: false,
+      test: ""
+    });
+  
+    const handleChange = (event) => {
+      const target = event.target;
+      const value = target.type === "checkbox" ? target.checked : target.value;
+      const name = target.name;
+  
+      setState((state) => ({
+        ...state,
+        [name]: value
+      }));
+    };
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(state);
+    };
+
+    
+
+
+    const handleClick = () => {
+    setName(state.fullName);
+  };
+
+    return (
+      <div className="App">
+        <header>
+          <div className="container">
+          </div>
+        </header>
+        <div className="container">
+          <div className="columns">
+            <div className="column is-9">
+              <form className="form" onSubmit={handleSubmit}>
+                <div className="field">
+                  <label className="label">My Info</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name="fullName"
+                      value={state.fullName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+  
+
+                  
+                <div className="field">
+                  <div className="control">
+                    <button 
+                      type="submit"
+                      value="Submit"
+                      className="button is-primary"
+                      onClick={handleClick}
+                    >submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const [mode, setMode] = useState("look");
   const bull = (
     <Box
       component="span"
@@ -205,18 +289,133 @@ const MyDescription = () => {
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          About Me:
+      <Typography sx={{ fontSize: 20 }} color = {colors["AVAILABLE"]} gutterBottom>
+            My description
+          </Typography>
+        <Typography sx={{ fontSize: 20 }} color="text.secondary" gutterBottom>
+          About Me: {name}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Edit Info</Button>
+        <Button size="small" onClick={() => setMode(["editing"])}>
+          Edit Info
+          </Button>
       </CardActions>
+      <div>
+        {mode[0] === "looking" && <MyInfo />}
+        {mode[0] === "editing" && < EditInfoo/>}
+      </div>
     </Card>
   );
 };
 
 const MyContacts = () => {
+  const [mode, setMode] = useState("look");
+  const [mail, setMail] = useState ("");
+  const [number, setNumber] = useState ("");
+  const [socials, setSocials] = useState ("");
+   const EditInfoo = () => {
+
+    const [state, setState] = React.useState({
+      fullName: "",
+      surname: "",
+      password: "",
+      editor: "",
+      message: "",
+      terms: false,
+      test: ""
+    });
+  
+    const handleChange = (event) => {
+      const target = event.target;
+      const value = target.type === "checkbox" ? target.checked : target.value;
+      const mail = target.mail;
+      const socials = target.socials;
+      const number = target.number;
+  
+      setState((state) => ({
+        ...state,
+        [mail]: value.mail,
+        [number]: value.number,
+        [socials]: value.socials
+        
+      }));
+    };
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(state);
+    };
+
+    const handleClick = () => {
+    setMail(state.mail);
+    setNumber(state.number);
+    setSocials(state.socials);
+  };
+
+    return (
+      <div className="App">
+        <header>
+          <div className="container">
+          </div>
+        </header>
+        <div className="container">
+          <div className="columns">
+            <div className="column is-9">
+              <form className="form" onSubmit={handleSubmit}>
+                <div className="field">
+                  <label className="label">Phone number</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name="number"
+                      value={state.number}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <label className="label">E-mail</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name="mail"
+                      value={state.mail}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <label className="label">Socials</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name="socials"
+                      value={state.soacials}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+  
+
+                  
+                <div className="field">
+                  <div className="control">
+                    <button 
+                      type="submit"
+                      value="Submit"
+                      className="button is-primary"
+                      onClick={handleClick}
+                    >submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  };
   const bull = (
     <Box
       component="span"
@@ -228,19 +427,26 @@ const MyContacts = () => {
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          E-mail:
+      <Typography sx={{ fontSize: 20 }} color = {colors["AVAILABLE"]} gutterBottom>
+            My contacts
+          </Typography>
+        <Typography sx={{ fontSize: 20 }} color="text.secondary" gutterBottom>
+          E-mail: {mail}
         </Typography>
-        <Typography variant="h5" component="div">
-          Phone Number:
+        <Typography sx={{ fontSize: 20 }} color = "text.secondary">
+          Phone Number: {number}
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          Socials:
+        <Typography sx={{ fontSize: 20 }} color="text.secondary">
+          Socials: {socials}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Edit Info</Button>
+        <Button size="small" onClick={() => setMode(["editing"])}>Edit Info</Button>
       </CardActions>
+       <div>
+        {mode[0] === "looking" && <MyInfo />}
+        {mode[0] === "editing" && < EditInfoo/>}
+      </div>
     </Card>
   );
 };

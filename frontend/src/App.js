@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 import { Route, Routes } from "react-router-dom";
 import Box from "@mui/material/Box";
 
@@ -15,8 +16,11 @@ import ViewCalendar from "./pages/components/ViewCalendar";
 
 import UserContext from "./util/UserContext";
 
+
 const TEACHERID = "63de63a2966a000d380fc8b3";
 const STUDENTID = "63de6454966a000d380fc8b5";
+
+
 
 export default function App() {
   const [user, setUser] = useState(["Teacher", TEACHERID]); // state contains user type and user ID
@@ -24,7 +28,7 @@ export default function App() {
     <UserContext.Provider value={{ user, setUser }}>
       <nav>
         <Box sx={{ height: "30px", display: "flex", alignItems: "center" }}>
-          <button onClick={() => setUser(["Student", STUDENTID])}>
+          <button button  onClick={() => setUser(["Student", STUDENTID])}>
             Student
           </button>
           <button onClick={() => setUser(["Teacher", TEACHERID])}>
